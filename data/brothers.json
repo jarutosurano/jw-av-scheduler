@@ -1,0 +1,160 @@
+{
+  "brothers": [
+    {
+      "id": "jonas-santiso",
+      "firstName": "Jonas",
+      "lastName": "Santiso",
+      "privilege": "elder",
+      "restrictions": [],
+      "isWTConductor": "primary",
+      "active": true
+    },
+    {
+      "id": "dandel-cabusas",
+      "firstName": "Dandel",
+      "lastName": "Cabusas",
+      "privilege": "elder",
+      "restrictions": [],
+      "active": true
+    },
+    {
+      "id": "raffy-mondares",
+      "firstName": "Raffy",
+      "lastName": "Mondares",
+      "privilege": "elder",
+      "restrictions": [],
+      "active": true
+    },
+    {
+      "id": "randy-quinol",
+      "firstName": "Randy",
+      "lastName": "Quinol",
+      "privilege": "elder",
+      "restrictions": [],
+      "active": true
+    },
+    {
+      "id": "matt-mancuso",
+      "firstName": "Matt",
+      "lastName": "Mancuso",
+      "privilege": "elder",
+      "restrictions": [],
+      "active": true
+    },
+    {
+      "id": "melky-basanes",
+      "firstName": "Melky",
+      "lastName": "Basanes",
+      "privilege": "elder",
+      "restrictions": [],
+      "active": true
+    },
+    {
+      "id": "gally-villanueva",
+      "firstName": "Gally",
+      "lastName": "Villanueva",
+      "privilege": "elder",
+      "restrictions": [],
+      "isWTConductor": "backup",
+      "active": true
+    },
+    {
+      "id": "abraham-penera",
+      "firstName": "Abraham",
+      "lastName": "Peñera",
+      "privilege": "elder",
+      "restrictions": [],
+      "active": true
+    },
+    {
+      "id": "herman-lucero",
+      "firstName": "Herman",
+      "lastName": "Lucero",
+      "privilege": "elder",
+      "restrictions": [],
+      "active": true
+    },
+    {
+      "id": "edgar-silverio",
+      "firstName": "Edgar",
+      "lastName": "Silverio",
+      "privilege": "elder",
+      "restrictions": [],
+      "active": true
+    },
+    {
+      "id": "jayr-sullano",
+      "firstName": "Jayr",
+      "lastName": "Sullano",
+      "privilege": "ministerial_servant",
+      "restrictions": [],
+      "active": true
+    },
+    {
+      "id": "edmer-sapla",
+      "firstName": "Edmer",
+      "lastName": "Sapla",
+      "privilege": "ministerial_servant",
+      "restrictions": [],
+      "active": true
+    },
+    {
+      "id": "jared-nieva",
+      "firstName": "Jared",
+      "lastName": "Nieva",
+      "privilege": "ministerial_servant",
+      "restrictions": [],
+      "active": true
+    },
+    {
+      "id": "ralph-arugay",
+      "firstName": "Ralph",
+      "lastName": "Arugay",
+      "privilege": "ministerial_servant",
+      "restrictions": [],
+      "active": true
+    },
+    {
+      "id": "zach-lucero",
+      "firstName": "Zach",
+      "lastName": "Lucero",
+      "privilege": "publisher",
+      "restrictions": ["no_entrance"],
+      "active": true
+    },
+    {
+      "id": "cezar-macasieb",
+      "firstName": "Cezar",
+      "lastName": "Macasieb",
+      "privilege": "publisher",
+      "restrictions": ["no_auditorium"],
+      "active": true
+    },
+    {
+      "id": "john-mahor",
+      "firstName": "John",
+      "lastName": "Mahor",
+      "privilege": "publisher",
+      "restrictions": ["no_auditorium"],
+      "active": true
+    },
+    {
+      "id": "xian-salazar",
+      "firstName": "Xian",
+      "lastName": "Salazar",
+      "privilege": "publisher",
+      "restrictions": [
+        "no_audio",
+        "no_video",
+        "no_av_assistant",
+        "no_entrance",
+        "mic_once_monthly"
+      ],
+      "active": true
+    }
+  ],
+  "wtConductor": {
+    "primary": "jonas-santiso",
+    "backup": "gally-villanueva"
+  }
+}

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Calendar body -->
+  <rect x="4" y="12" width="32" height="32" rx="4" fill="#f5f5f5" stroke="#333" stroke-width="2"/>
+  <!-- Calendar header -->
+  <rect x="4" y="12" width="32" height="10" rx="4" fill="#ff6b6b"/>
+  <rect x="4" y="18" width="32" height="4" fill="#ff6b6b"/>
+  <!-- Calendar hooks -->
+  <rect x="12" y="8" width="4" height="8" rx="2" fill="#333"/>
+  <rect x="24" y="8" width="4" height="8" rx="2" fill="#333"/>
+  <!-- Number 31 -->
+  <text x="20" y="38" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">31</text>
+  <!-- Clock -->
+  <circle cx="12" cy="48" r="8" fill="#fff" stroke="#333" stroke-width="2"/>
+  <circle cx="12" cy="48" r="1" fill="#333"/>
+  <line x1="12" y1="48" x2="12" y2="43" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+  <line x1="12" y1="48" x2="16" y2="48" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+  <!-- Timeline -->
+  <line x1="44" y1="8" x2="44" y2="56" stroke="#333" stroke-width="2"/>
+  <circle cx="44" cy="14" r="3" fill="#ff6b6b"/>
+  <circle cx="44" cy="28" r="3" fill="#a78bfa"/>
+  <circle cx="44" cy="42" r="3" fill="#34d399"/>
+  <circle cx="44" cy="56" r="3" fill="#fbbf24"/>
+  <!-- Task bars -->
+  <rect x="50" y="10" width="12" height="8" rx="2" fill="#ff6b6b"/>
+  <rect x="50" y="24" width="12" height="8" rx="2" fill="#a78bfa"/>
+  <rect x="50" y="38" width="12" height="8" rx="2" fill="#34d399"/>
+  <rect x="50" y="52" width="12" height="8" rx="2" fill="#fbbf24"/>
+</svg>

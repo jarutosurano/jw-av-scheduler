@@ -1,0 +1,381 @@
+---
+import {
+  getAvailableMonths,
+  groupMonthsByYear,
+  getMonthName,
+} from '../lib/schedules';
+import ThemeToggle from './ThemeToggle.astro';
+
+interface Props {
+  currentMonth?: string;
+}
+
+const { currentMonth } = Astro.props;
+const months = getAvailableMonths();
+const groupedMonths = groupMonthsByYear(months);
+const years = Array.from(groupedMonths.keys()).sort().reverse();
+
+const baseUrl = import.meta.env.BASE_URL || '/';
+---
+
+<!-- Mobile header with hamburger menu -->
+<header class="mobile-header">
+  <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle menu" aria-expanded="false">
+    <svg class="hamburger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="18" x2="21" y2="18" />
+    </svg>
+    <svg class="close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  </button>
+  <a href={baseUrl} class="mobile-logo">
+    <img src={`${baseUrl.endsWith('/') ? baseUrl : baseUrl + '/'}favicon.svg`} alt="Schedule" class="logo-icon" />
+    <span class="logo-text">AV Scheduler</span>
+  </a>
+  <div class="mobile-header-spacer"></div>
+</header>
+
+<!-- Overlay for mobile -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href={baseUrl} class="logo">
+      <img src={`${baseUrl.endsWith('/') ? baseUrl : baseUrl + '/'}favicon.svg`} alt="Schedule" class="logo-icon" />
+      <span class="logo-text">AV Scheduler</span>
+    </a>
+  </div>
+
+  <nav class="sidebar-nav">
+    {years.length === 0 ? (
+      <p class="no-schedules">No schedules yet</p>
+    ) : (
+      years.map((year) => (
+        <div class="year-group">
+          <h3 class="year-label">{year}</h3>
+          <ul class="month-list">
+            {groupedMonths.get(year)!.map((month) => {
+              const isActive = month === currentMonth;
+              const monthName = getMonthName(month);
+              return (
+                <li>
+                  <a
+                    href={`${baseUrl.endsWith('/') ? baseUrl : baseUrl + '/'}schedule/${month}`}
+                    class:list={['month-link', { active: isActive }]}
+                  >
+                    {monthName}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))
+    )}
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="footer-row">
+      <p class="version">Victoria Tagalog</p>
+      <ThemeToggle />
+    </div>
+  </div>
+</aside>
+
+<style>
+  .sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background: var(--card-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    overflow-y: auto;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .sidebar-header {
+    padding: 1.5rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+
+  .logo-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .logo-text {
+    font-weight: 700;
+    font-size: 1.125rem;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 1rem;
+  }
+
+  .no-schedules {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .year-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .year-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    padding-left: 0.75rem;
+  }
+
+  .month-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .month-link {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    transition: all 0.15s ease;
+  }
+
+  .month-link:hover {
+    background: var(--hover-bg);
+    color: var(--text-primary);
+  }
+
+  .month-link.active {
+    background: var(--primary-bg);
+    color: var(--primary-color);
+    font-weight: 500;
+  }
+
+  .sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .version {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  /* Mobile header - hidden on desktop */
+  .mobile-header {
+    display: none;
+  }
+
+  .sidebar-overlay {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    /* Mobile header */
+    .mobile-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      padding: 0 1rem;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      z-index: 100;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .hamburger-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      background: none;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      color: var(--text-primary);
+      transition: background-color 0.15s ease;
+    }
+
+    .hamburger-btn:hover {
+      background: var(--hover-bg);
+    }
+
+    .hamburger-icon,
+    .close-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .close-icon {
+      display: none;
+    }
+
+    .hamburger-btn[aria-expanded="true"] .hamburger-icon {
+      display: none;
+    }
+
+    .hamburger-btn[aria-expanded="true"] .close-icon {
+      display: block;
+    }
+
+    .mobile-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .mobile-logo .logo-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .mobile-logo .logo-text {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .mobile-header-spacer {
+      width: 40px;
+    }
+
+    /* Sidebar - hidden by default on mobile */
+    .sidebar {
+      transform: translateX(-100%);
+      z-index: 101;
+      transition: transform 0.3s ease, background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    /* Overlay */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 99;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+      display: block;
+      opacity: 1;
+    }
+
+    /* Hide desktop sidebar header content on mobile */
+    .sidebar-header {
+      display: none;
+    }
+
+    .sidebar-nav {
+      padding-top: 0.5rem;
+    }
+  }
+
+  @media print {
+    .sidebar,
+    .mobile-header,
+    .sidebar-overlay {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  function initMobileMenu() {
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    if (!hamburgerBtn || !sidebar || !overlay) return;
+
+    function toggleMenu() {
+      const isOpen = sidebar.classList.contains('open');
+
+      if (isOpen) {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        hamburgerBtn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      } else {
+        sidebar.classList.add('open');
+        overlay.classList.add('active');
+        hamburgerBtn.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    hamburgerBtn.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', toggleMenu);
+
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+        toggleMenu();
+      }
+    });
+
+    // Close menu when clicking a link
+    sidebar.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
+          toggleMenu();
+        }
+      });
+    });
+  }
+
+  // Run on initial load
+  initMobileMenu();
+
+  // Re-run after Astro page transitions
+  document.addEventListener('astro:after-swap', initMobileMenu);
+</script>

@@ -1,0 +1,136 @@
+{
+  "month": "2026-03",
+  "generated": "2026-01-30T19:03:09.068Z",
+  "weeks": [
+    {
+      "weekOf": "2026-03-06",
+      "midweekDate": "2026-03-06",
+      "weekendDate": "2026-03-08",
+      "assignments": {
+        "audio": "randy-quinol",
+        "video": "jared-nieva",
+        "avAssistant": "edgar-silverio",
+        "rightMic": "ralph-arugay",
+        "leftMic": "cezar-macasieb",
+        "frontStage": "zach-lucero",
+        "auditorium": "edmer-sapla",
+        "entrance1": "john-mahor",
+        "entrance2": "matt-mancuso"
+      },
+      "unavailable": {
+        "noAV": [
+          "Santiso, Jonas",
+          "Villanueva, Sir Galahad",
+          "Jonas Santiso"
+        ],
+        "noMic": [
+          "Basanes, Melquisidecks",
+          "Lucero, Zach",
+          "Quinol, Randino",
+          "Penera, Abraham",
+          "Sapla, Edmer",
+          "Silverio, Edgardo",
+          "Mondares, Rafael",
+          "Villanueva, Sir Galahad"
+        ]
+      },
+      "conflicts": []
+    },
+    {
+      "weekOf": "2026-03-13",
+      "midweekDate": "2026-03-13",
+      "weekendDate": "2026-03-15",
+      "assignments": {
+        "audio": "melky-basanes",
+        "video": "dandel-cabusas",
+        "avAssistant": "gally-villanueva",
+        "rightMic": "zach-lucero",
+        "leftMic": "xian-salazar",
+        "frontStage": "raffy-mondares",
+        "auditorium": "abraham-penera",
+        "entrance1": "jayr-sullano",
+        "entrance2": "randy-quinol"
+      },
+      "unavailable": {
+        "noAV": [
+          "Lucero, Herman",
+          "Penera, Abraham",
+          "Jonas Santiso"
+        ],
+        "noMic": [
+          "Quinol, Randino",
+          "Macasieb, Cezar",
+          "Mondares, Rafael",
+          "Sapla, Edmer",
+          "Cabusas, Mike Dandel",
+          "Basanes, Melquisidecks",
+          "Lucero, Herman"
+        ]
+      },
+      "conflicts": []
+    },
+    {
+      "weekOf": "2026-03-20",
+      "midweekDate": "2026-03-20",
+      "weekendDate": "2026-03-22",
+      "assignments": {
+        "audio": "herman-lucero",
+        "video": "ralph-arugay",
+        "avAssistant": "matt-mancuso",
+        "rightMic": "edgar-silverio",
+        "leftMic": "zach-lucero",
+        "frontStage": "edmer-sapla",
+        "auditorium": "jared-nieva",
+        "entrance1": "cezar-macasieb",
+        "entrance2": "john-mahor"
+      },
+      "unavailable": {
+        "noAV": [
+          "Basanes, Melquisidecks",
+          "Mondares, Rafael",
+          "Jonas Santiso"
+        ],
+        "noMic": [
+          "Lucero, Herman",
+          "Salazar, Xian",
+          "Penera, Abraham",
+          "Nieva, Jared M.",
+          "Centeno, Eloffer Jehson",
+          "Quinol, Randino"
+        ]
+      },
+      "conflicts": []
+    },
+    {
+      "weekOf": "2026-03-27",
+      "midweekDate": "2026-03-27",
+      "weekendDate": "2026-03-29",
+      "assignments": {
+        "audio": "abraham-penera",
+        "video": "jayr-sullano",
+        "avAssistant": "dandel-cabusas",
+        "rightMic": "randy-quinol",
+        "leftMic": "zach-lucero",
+        "frontStage": "melky-basanes",
+        "auditorium": "raffy-mondares",
+        "entrance1": "matt-mancuso",
+        "entrance2": "herman-lucero"
+      },
+      "unavailable": {
+        "noAV": [
+          "Villanueva, Sir Galahad",
+          "Silverio, Edgardo",
+          "Jonas Santiso"
+        ],
+        "noMic": [
+          "Cabusas, Mike Dandel",
+          "Mahor, John Lawrence",
+          "Mondares, Rafael",
+          "Silverio, Edgardo",
+          "Villanueva, Sir Galahad"
+        ]
+      },
+      "conflicts": []
+    }
+  ]
+}

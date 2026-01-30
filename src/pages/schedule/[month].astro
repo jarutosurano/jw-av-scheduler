@@ -1,0 +1,103 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ScheduleTable from '../../components/ScheduleTable.astro';
+import {
+  getAvailableMonths,
+  loadSchedule,
+  formatMonthDisplay,
+} from '../../lib/schedules';
+
+export function getStaticPaths() {
+  const months = getAvailableMonths();
+  return months.map((month) => ({
+    params: { month },
+  }));
+}
+
+const { month } = Astro.params;
+const schedule = loadSchedule(month!);
+
+if (!schedule) {
+  return Astro.redirect('/');
+}
+
+const monthDisplay = formatMonthDisplay(month!);
+const generatedDate = new Date(schedule.generated).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+});
+---
+
+<Layout title={monthDisplay} currentMonth={month}>
+  <div class="container">
+    <header class="page-header">
+      <div class="header-content">
+        <div>
+          <h1 class="page-title">{monthDisplay}</h1>
+          <p class="page-subtitle">AV Schedule</p>
+        </div>
+        <div class="header-actions">
+          <button onclick="window.print()" class="btn btn-secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9"></polyline>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            Print
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <ScheduleTable weeks={schedule.weeks} />
+
+    <footer class="schedule-footer">
+      <p>Generated: {generatedDate}</p>
+    </footer>
+  </div>
+</Layout>
+
+<style>
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .schedule-footer {
+    margin-top: 1.5rem;
+    text-align: right;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  @media print {
+    .header-actions {
+      display: none;
+    }
+
+    .page-header {
+      margin-bottom: 1rem;
+    }
+
+    .schedule-footer {
+      margin-top: 1rem;
+      font-size: 10pt;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .header-content {
+      flex-direction: column;
+    }
+  }
+</style>

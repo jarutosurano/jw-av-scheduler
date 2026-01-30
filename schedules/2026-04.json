@@ -1,0 +1,115 @@
+{
+  "month": "2026-04",
+  "generated": "2026-01-30T19:14:36.808Z",
+  "weeks": [
+    {
+      "weekOf": "2026-04-03",
+      "midweekDate": "2026-04-03",
+      "weekendDate": "2026-04-05",
+      "assignments": {
+        "audio": "jonas-santiso",
+        "video": "herman-lucero",
+        "avAssistant": "jared-nieva",
+        "rightMic": "cezar-macasieb",
+        "leftMic": "ralph-arugay",
+        "frontStage": "edgar-silverio",
+        "auditorium": "dandel-cabusas",
+        "entrance1": "john-mahor",
+        "entrance2": "raffy-mondares"
+      },
+      "unavailable": {
+        "noAV": [],
+        "noMic": []
+      },
+      "conflicts": [],
+      "note": "Memorial",
+      "weekendOnly": true
+    },
+    {
+      "weekOf": "2026-04-10",
+      "midweekDate": "2026-04-10",
+      "weekendDate": "2026-04-12",
+      "assignments": {
+        "audio": null,
+        "video": null,
+        "avAssistant": null,
+        "rightMic": null,
+        "leftMic": null,
+        "frontStage": null,
+        "auditorium": null,
+        "entrance1": null,
+        "entrance2": null
+      },
+      "unavailable": {
+        "noAV": [],
+        "noMic": []
+      },
+      "conflicts": [],
+      "note": "Circuit Assembly",
+      "noMeeting": true
+    },
+    {
+      "weekOf": "2026-04-17",
+      "midweekDate": "2026-04-17",
+      "weekendDate": "2026-04-19",
+      "assignments": {
+        "audio": "jayr-sullano",
+        "video": "herman-lucero",
+        "avAssistant": "ralph-arugay",
+        "rightMic": "jared-nieva",
+        "leftMic": "dandel-cabusas",
+        "frontStage": "matt-mancuso",
+        "auditorium": "edgar-silverio",
+        "entrance1": "randy-quinol",
+        "entrance2": "melky-basanes"
+      },
+      "unavailable": {
+        "noAV": [
+          "Mondares, Rafael",
+          "Villanueva, Sir Galahad",
+          "Jonas Santiso"
+        ],
+        "noMic": [
+          "Mancuso, Matthew",
+          "Lucero, Zach",
+          "Macasieb, Cezar",
+          "Mondares, Rafael",
+          "Tunay na Pananampalataya",
+          "Silverio, Edgardo"
+        ]
+      },
+      "conflicts": []
+    },
+    {
+      "weekOf": "2026-04-24",
+      "midweekDate": "2026-04-24",
+      "weekendDate": "2026-04-26",
+      "assignments": {
+        "audio": "gally-villanueva",
+        "video": "john-mahor",
+        "avAssistant": "cezar-macasieb",
+        "rightMic": "zach-lucero",
+        "leftMic": "raffy-mondares",
+        "frontStage": "xian-salazar",
+        "auditorium": "edmer-sapla",
+        "entrance1": "ralph-arugay",
+        "entrance2": "matt-mancuso"
+      },
+      "unavailable": {
+        "noAV": [
+          "Lucero, Herman",
+          "Quinol, Randino",
+          "Jonas Santiso"
+        ],
+        "noMic": [
+          "Sapla, Edmer",
+          "Salazar, Xian",
+          "Arugay, Ralph",
+          "Sullano, Jayr P.",
+          "Macasieb, Cezar"
+        ]
+      },
+      "conflicts": []
+    }
+  ]
+}

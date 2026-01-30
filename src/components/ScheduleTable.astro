@@ -1,0 +1,259 @@
+---
+import type { WeeklySchedule } from '../types';
+import {
+  positionLabels,
+  positionOrder,
+  formatDateRange,
+  formatBrotherName,
+} from '../lib/schedules';
+
+interface Props {
+  weeks: WeeklySchedule[];
+}
+
+const { weeks } = Astro.props;
+---
+
+<div class="schedule-container">
+  <table class="schedule-table">
+    <thead>
+      <tr>
+        <th class="position-header">Assignment</th>
+        {weeks.map((week) => (
+          <th class="date-header">
+            <span class="date-range">{formatDateRange(week.midweekDate, week.weekendDate)}</span>
+            <span class="days">{week.weekendOnly ? '(Sun only)' : '(Fri & Sun)'}</span>
+            {week.note && <span class="week-note">{week.note}</span>}
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {positionOrder.map((position, idx) => (
+        <tr class:list={[{ 'alt-row': idx % 2 === 1 }]}>
+          <td class="position-cell">
+            <span class="position-label">{positionLabels[position]}</span>
+          </td>
+          {weeks.map((week) => {
+            if (week.noMeeting) {
+              // Show special event note for weeks with no meeting
+              return idx === 0 ? (
+                <td class="no-meeting-cell" rowspan={positionOrder.length}>
+                  <span class="no-meeting-text">{week.note || 'No Meeting'}</span>
+                </td>
+              ) : null;
+            }
+            const brotherId = week.assignments[position];
+            const name = formatBrotherName(brotherId);
+            return (
+              <td class="assignment-cell">
+                <span class="brother-name">{name}</span>
+              </td>
+            );
+          })}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .schedule-container {
+    overflow-x: auto;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+
+  th, td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  thead {
+    background: var(--table-header-bg);
+  }
+
+  .position-header {
+    font-weight: 600;
+    color: var(--text-primary);
+    min-width: 160px;
+    position: sticky;
+    left: 0;
+    background: var(--table-header-bg);
+    z-index: 1;
+  }
+
+  .date-header {
+    text-align: center;
+    min-width: 140px;
+  }
+
+  .date-range {
+    display: block;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .days {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-top: 0.125rem;
+  }
+
+  .week-note {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: var(--primary-color);
+    margin-top: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  .position-cell {
+    font-weight: 500;
+    color: var(--text-primary);
+    background: var(--card-bg);
+    position: sticky;
+    left: 0;
+    z-index: 1;
+  }
+
+  .alt-row .position-cell {
+    background: var(--table-header-bg);
+  }
+
+  .alt-row {
+    background: var(--table-header-bg);
+  }
+
+  .assignment-cell {
+    text-align: center;
+  }
+
+  .brother-name {
+    color: var(--text-primary);
+  }
+
+  .no-meeting-cell {
+    text-align: center;
+    vertical-align: middle;
+    background: var(--primary-bg);
+  }
+
+  .no-meeting-text {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 0.9375rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  tbody tr:hover {
+    background: var(--table-row-hover) !important;
+  }
+
+  tbody tr:hover .position-cell {
+    background: var(--table-row-hover) !important;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* Mobile styles */
+  @media (max-width: 768px) {
+    .schedule-table {
+      font-size: 0.8125rem;
+    }
+
+    th, td {
+      padding: 0.5rem 0.625rem;
+    }
+
+    .position-header,
+    .position-cell {
+      min-width: 100px;
+    }
+
+    .date-header {
+      min-width: 100px;
+    }
+
+    .date-range {
+      font-size: 0.8125rem;
+    }
+
+    .days {
+      font-size: 0.6875rem;
+    }
+
+    .week-note {
+      font-size: 0.625rem;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .schedule-container {
+      border: 2px solid #000;
+      overflow: visible;
+      background: white;
+    }
+
+    .schedule-table {
+      font-size: 11pt;
+    }
+
+    th, td {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      color: black;
+    }
+
+    thead {
+      background: #f5f5f5;
+    }
+
+    .position-cell,
+    .position-header {
+      position: static;
+      background: white;
+      color: black;
+    }
+
+    .alt-row {
+      background: #f5f5f5 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .alt-row .position-cell {
+      background: #f5f5f5 !important;
+    }
+
+    tbody tr:hover {
+      background: transparent !important;
+    }
+
+    .brother-name,
+    .date-range {
+      color: black;
+    }
+
+    .days {
+      color: #666;
+    }
+  }
+</style>

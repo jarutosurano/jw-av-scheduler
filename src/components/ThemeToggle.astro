@@ -1,0 +1,189 @@
+---
+---
+
+<div class="theme-switcher">
+  <div class="theme-options" role="radiogroup" aria-label="Theme selection">
+    <button
+      class="theme-option"
+      data-theme="light"
+      role="radio"
+      aria-checked="false"
+      title="Light mode"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+    </button>
+    <button
+      class="theme-option"
+      data-theme="system"
+      role="radio"
+      aria-checked="false"
+      title="System preference"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+        <line x1="8" y1="21" x2="16" y2="21"></line>
+        <line x1="12" y1="17" x2="12" y2="21"></line>
+      </svg>
+    </button>
+    <button
+      class="theme-option"
+      data-theme="dark"
+      role="radio"
+      aria-checked="false"
+      title="Dark mode"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </button>
+    <div class="theme-indicator"></div>
+  </div>
+</div>
+
+<style>
+  .theme-switcher {
+    display: flex;
+    align-items: center;
+  }
+
+  .theme-options {
+    display: flex;
+    align-items: center;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+    position: relative;
+    gap: 0.125rem;
+  }
+
+  .theme-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 0.375rem;
+    transition: color 0.15s ease;
+    position: relative;
+    z-index: 1;
+  }
+
+  .theme-option:hover {
+    color: var(--text-primary);
+  }
+
+  .theme-option[aria-checked="true"] {
+    color: var(--primary-color);
+  }
+
+  .theme-option svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .theme-indicator {
+    position: absolute;
+    top: 0.25rem;
+    left: 0.25rem;
+    width: 32px;
+    height: 28px;
+    background: var(--card-bg);
+    border-radius: 0.375rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 0;
+  }
+
+  /* Indicator positions */
+  .theme-options[data-active="light"] .theme-indicator {
+    transform: translateX(0);
+  }
+
+  .theme-options[data-active="system"] .theme-indicator {
+    transform: translateX(calc(32px + 0.125rem));
+  }
+
+  .theme-options[data-active="dark"] .theme-indicator {
+    transform: translateX(calc(64px + 0.25rem));
+  }
+
+  @media print {
+    .theme-switcher {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  function initThemeSwitcher() {
+    const themeOptions = document.querySelectorAll('.theme-option');
+    const optionsContainer = document.querySelector('.theme-options');
+
+    // Get stored theme or default to system
+    const getStoredTheme = (): string => localStorage.getItem('theme') || 'system';
+
+    // Get actual theme (resolving system preference)
+    const getActualTheme = (theme: string): string => {
+      if (theme === 'system') {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      return theme;
+    };
+
+    // Apply theme to document
+    const applyTheme = (theme: string) => {
+      const actualTheme = getActualTheme(theme);
+      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.add(actualTheme);
+
+      // Update ARIA states and indicator position
+      themeOptions.forEach(option => {
+        const optionTheme = option.getAttribute('data-theme');
+        const isSelected = optionTheme === theme;
+        option.setAttribute('aria-checked', isSelected.toString());
+      });
+
+      // Update indicator position
+      optionsContainer?.setAttribute('data-active', theme);
+    };
+
+    // Initialize with stored theme
+    applyTheme(getStoredTheme());
+
+    // Handle theme selection
+    themeOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        const theme = option.getAttribute('data-theme') || 'system';
+        localStorage.setItem('theme', theme);
+        applyTheme(theme);
+      });
+    });
+
+    // Listen for system preference changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (getStoredTheme() === 'system') {
+        applyTheme('system');
+      }
+    });
+  }
+
+  // Run on page load and after Astro navigation
+  initThemeSwitcher();
+  document.addEventListener('astro:page-load', initThemeSwitcher);
+</script>
