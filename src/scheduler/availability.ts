@@ -7,7 +7,7 @@
 
 import type { AVPosition, Brother } from '../types';
 import type { WeeklyMeetingData } from '../parser/index.js';
-import { brothers, getBrotherByName, getActiveBrothers } from '../config/brothers.js';
+import { brothers, getActiveBrothers } from '../config/brothers.js';
 import {
   allAVPositions,
   privilegedPositions,
@@ -48,23 +48,35 @@ function canBrotherDoPosition(brother: Brother, position: AVPosition): boolean {
 /**
  * Check if a brother has the required privilege for a position
  */
-function hasBrotherRequiredPrivilege(brother: Brother, position: AVPosition): boolean {
+function hasBrotherRequiredPrivilege(
+  brother: Brother,
+  position: AVPosition
+): boolean {
   if (!privilegedPositions.includes(position)) {
     return true; // No privilege requirement
   }
 
   // Auditorium requires Elder or MS
-  return brother.privilege === 'elder' || brother.privilege === 'ministerial_servant';
+  return (
+    brother.privilege === 'elder' || brother.privilege === 'ministerial_servant'
+  );
 }
 
 /**
  * Check if a name matches a brother (handles various name formats)
  */
-function doesNameMatchBrother(name: string, brother: Brother): boolean {
-  const normalizedName = name.toLowerCase().trim();
-  const fullName = brother.fullName.toLowerCase();
-  const firstName = brother.firstName.toLowerCase();
-  const lastName = brother.lastName.toLowerCase();
+/**
+ * Strip accents/diacritics from a string (e.g., Peñera → Penera)
+ */
+function stripAccents(str: string): string {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+export function doesNameMatchBrother(name: string, brother: Brother): boolean {
+  const normalizedName = stripAccents(name.toLowerCase().trim());
+  const fullName = stripAccents(brother.fullName.toLowerCase());
+  const firstName = stripAccents(brother.firstName.toLowerCase());
+  const lastName = stripAccents(brother.lastName.toLowerCase());
 
   // Direct match
   if (normalizedName === fullName) return true;
@@ -77,7 +89,10 @@ function doesNameMatchBrother(name: string, brother: Brother): boolean {
       const pdfFirstName = parts[1].split(' ')[0]; // Remove middle initials
 
       // Check if both parts match
-      if (pdfLastName === lastName && pdfFirstName.startsWith(firstName.substring(0, 3))) {
+      if (
+        pdfLastName === lastName &&
+        pdfFirstName.startsWith(firstName.substring(0, 3))
+      ) {
         return true;
       }
       // Handle nicknames: "Randino" for "Randy", "Rafael" for "Raffy"
@@ -92,7 +107,11 @@ function doesNameMatchBrother(name: string, brother: Brother): boolean {
           dandel: ['mike dandel'],
         };
         const nicknames = nicknameMap[firstName] || [];
-        if (nicknames.some((n) => pdfFirstName.includes(n) || n.includes(pdfFirstName))) {
+        if (
+          nicknames.some(
+            (n) => pdfFirstName.includes(n) || n.includes(pdfFirstName)
+          )
+        ) {
           return true;
         }
       }

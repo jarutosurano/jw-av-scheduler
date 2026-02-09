@@ -12,18 +12,18 @@ export const meetingPartConstraints: Record<MeetingPartType, PartConstraint> = {
   // Midweek Meeting
   midweek_chairman: 'no_av', // Cannot have ANY AV assignment
   opening_prayer: 'none',
-  treasures_talk: 'none', // 10 min talk - can be assigned to AV (optional)
+  treasures_talk: 'no_mic', // 10 min talk - no mic assignment
   spiritual_gems: 'no_mic', // Espirituwal na Hiyas
   bible_reading: 'no_mic', // Pagbabasa ng Bibliya
-  student_talk: 'no_mic', // 3/4/5 min Maging Mahusay
+  student_talk: 'none', // 3/4/5 min Apply Yourself - no restriction (not the same as Public Talk)
   living_as_christians: 'none', // 5/10/15 min parts
-  cbs_chairman: 'no_av', // CBS conductor - no AV
+  cbs_chairman: 'no_av', // CBS Conductor - no AV
   cbs_reader: 'no_mic',
   closing_prayer: 'none',
 
   // Weekend Meeting
-  weekend_chairman: 'no_mic',
-  public_talk: 'no_mic',
+  weekend_chairman: 'no_av',
+  public_talk: 'no_av',
   wt_conductor: 'no_av', // WT Conductor - no AV at all
   wt_reader: 'no_mic',
 };
@@ -56,6 +56,7 @@ export const restrictionToPositions: Record<RestrictionType, AVPosition[]> = {
   no_video: ['video'],
   no_av_assistant: ['avAssistant'],
   no_mic: ['rightMic', 'leftMic'],
+  no_frontStage: ['frontStage'],
   no_entrance: ['entrance1', 'entrance2'],
   no_auditorium: ['auditorium'],
   mic_once_monthly: [], // Handled separately with history tracking
@@ -72,7 +73,6 @@ export const privilegedPositions: AVPosition[] = ['auditorium'];
  */
 export const videoEligibleBrotherIds: string[] = [
   // MS and publishers
-  'ralph-arugay',
   'jayr-sullano',
   'jared-nieva',
   'zach-lucero',
@@ -88,7 +88,7 @@ export const videoEligibleBrotherIds: string[] = [
 /**
  * Brothers to prioritize for assignments (assign every week if no conflict)
  */
-export const priorityBrotherIds: string[] = ['zach-lucero'];
+export const priorityBrotherIds: string[] = ['zach-lucero', 'john-mahor'];
 
 /**
  * Priority order for scheduling (most critical first)
@@ -178,8 +178,18 @@ export const partKeywords: Record<MeetingPartType, string[]> = {
   treasures_talk: ['min.)'], // First 10 min talk in Treasures section
   spiritual_gems: ['Espirituwal na Hiyas', 'Spiritual Gems'],
   bible_reading: ['Pagbabasa ng Bibliya', 'Bible Reading', 'Pagbabasa'],
-  student_talk: ['Maging Mahusay', 'Pakikipag-usap', 'Pahayag', 'Paggawa ng mga Alagad'],
-  living_as_christians: ['Pamumuhay', 'Living as Christians', 'Video Clip', 'Lokal na Pangangailangan'],
+  student_talk: [
+    'Maging Mahusay',
+    'Pakikipag-usap',
+    'Pahayag',
+    'Paggawa ng mga Alagad',
+  ],
+  living_as_christians: [
+    'Pamumuhay',
+    'Living as Christians',
+    'Video Clip',
+    'Lokal na Pangangailangan',
+  ],
   cbs_chairman: ['Pag-aaral ng Kongregasyon', 'Congregation Bible Study'],
   cbs_reader: [], // Second name after CBS Chairman
   closing_prayer: ['Closing Prayer'],

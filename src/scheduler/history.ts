@@ -9,6 +9,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { AVPosition, AssignmentHistory } from '../types';
 import { micPositions, priorityBrotherIds } from '../config/constraints.js';
+import { getBrotherById } from '../config/brothers.js';
 
 /**
  * History data structure stored in JSON
@@ -81,6 +82,24 @@ export function addAssignment(
 }
 
 /**
+ * Remove an assignment from history (for swapping)
+ */
+export function removeAssignment(
+  history: HistoryData,
+  brotherId: string,
+  position: AVPosition,
+  date: string
+): void {
+  const index = history.assignments.findIndex(
+    (a) =>
+      a.brotherId === brotherId && a.position === position && a.date === date
+  );
+  if (index !== -1) {
+    history.assignments.splice(index, 1);
+  }
+}
+
+/**
  * Get assignments for a specific month
  */
 export function getAssignmentsForMonth(
@@ -103,7 +122,9 @@ export function getAssignmentsForBrother(
 /**
  * Get statistics for all brothers
  */
-export function getAllBrotherStats(history: HistoryData): Map<string, BrotherStats> {
+export function getAllBrotherStats(
+  history: HistoryData
+): Map<string, BrotherStats> {
   const stats = new Map<string, BrotherStats>();
 
   for (const assignment of history.assignments) {
@@ -125,7 +146,10 @@ export function getAllBrotherStats(history: HistoryData): Map<string, BrotherSta
       (brotherStats.byPosition[assignment.position] || 0) + 1;
 
     // Track most recent assignment
-    if (!brotherStats.lastAssignment || assignment.date > brotherStats.lastAssignment) {
+    if (
+      !brotherStats.lastAssignment ||
+      assignment.date > brotherStats.lastAssignment
+    ) {
       brotherStats.lastAssignment = assignment.date;
       brotherStats.lastPositionAssigned = assignment.position;
     }
@@ -175,10 +199,13 @@ export function calculateAssignmentScore(
   history: HistoryData,
   brotherId: string,
   position: AVPosition,
-  referenceDate: string
+  referenceDate: string,
+  meetingPartCount: number = 0
 ): number {
   const brotherAssignments = getAssignmentsForBrother(history, brotherId);
-  const positionAssignments = brotherAssignments.filter((a) => a.position === position);
+  const positionAssignments = brotherAssignments.filter(
+    (a) => a.position === position
+  );
 
   // Base score: total assignments for this position
   let score = positionAssignments.length * 10;
@@ -187,8 +214,9 @@ export function calculateAssignmentScore(
   const recentAssignments = brotherAssignments.filter((a) => {
     const assignDate = new Date(a.date);
     const refDate = new Date(referenceDate);
-    const diffDays = (refDate.getTime() - assignDate.getTime()) / (1000 * 60 * 60 * 24);
-    return diffDays <= 30; // Last 30 days
+    const diffDays =
+      (refDate.getTime() - assignDate.getTime()) / (1000 * 60 * 60 * 24);
+    return diffDays >= 0 && diffDays <= 30; // Last 30 days (exclude future dates)
   });
 
   score += recentAssignments.length * 5;
@@ -197,11 +225,31 @@ export function calculateAssignmentScore(
   const lastWeekAssignments = brotherAssignments.filter((a) => {
     const assignDate = new Date(a.date);
     const refDate = new Date(referenceDate);
-    const diffDays = (refDate.getTime() - assignDate.getTime()) / (1000 * 60 * 60 * 24);
-    return diffDays <= 7;
+    const diffDays =
+      (refDate.getTime() - assignDate.getTime()) / (1000 * 60 * 60 * 24);
+    return diffDays >= 0 && diffDays <= 7;
   });
 
   score += lastWeekAssignments.length * 20;
+
+  // Strongly deprioritize brothers who already have meeting parts this week
+  // Brothers with no parts should always get AV before brothers with parts
+  if (meetingPartCount > 0) {
+    score += 200 + meetingPartCount * 50;
+  }
+
+  // Privilege-based scoring: MS and publishers get more AV than Elders
+  // Elders have more meeting responsibilities, MS/publishers assist with AV
+  const brother = getBrotherById(brotherId);
+  if (brother) {
+    if (brother.privilege === 'elder') {
+      score += 25; // Deprioritize Elders for AV (they have more meeting parts)
+    } else if (brother.privilege === 'ministerial_servant') {
+      score -= 25; // Boost for MS (assistants, should do more AV)
+    } else if (brother.privilege === 'publisher') {
+      score -= 15; // Boost for publishers
+    }
+  }
 
   // Priority brothers (like Zach) should be assigned every week but rotate positions
   // Give bonus inversely proportional to how many times they've done this position
@@ -209,7 +257,7 @@ export function calculateAssignmentScore(
     const positionCount = positionAssignments.length;
     // More bonus for positions they haven't done much
     // This encourages rotation while still ensuring assignment
-    score -= Math.max(15, 50 - (positionCount * 15));
+    score -= Math.max(15, 50 - positionCount * 15);
   }
 
   return score;
@@ -222,11 +270,24 @@ export function sortBrothersByFairness(
   brotherIds: string[],
   history: HistoryData,
   position: AVPosition,
-  referenceDate: string
+  referenceDate: string,
+  meetingPartCounts: Map<string, number> = new Map()
 ): string[] {
   return [...brotherIds].sort((a, b) => {
-    const scoreA = calculateAssignmentScore(history, a, position, referenceDate);
-    const scoreB = calculateAssignmentScore(history, b, position, referenceDate);
+    const scoreA = calculateAssignmentScore(
+      history,
+      a,
+      position,
+      referenceDate,
+      meetingPartCounts.get(a) || 0
+    );
+    const scoreB = calculateAssignmentScore(
+      history,
+      b,
+      position,
+      referenceDate,
+      meetingPartCounts.get(b) || 0
+    );
     return scoreA - scoreB;
   });
 }
@@ -252,7 +313,10 @@ export function getLeastAssignedBrothers(
 /**
  * Clear history for a specific month (useful for regenerating)
  */
-export function clearMonthHistory(history: HistoryData, yearMonth: string): void {
+export function clearMonthHistory(
+  history: HistoryData,
+  yearMonth: string
+): void {
   history.assignments = history.assignments.filter(
     (a) => !a.date.startsWith(yearMonth)
   );

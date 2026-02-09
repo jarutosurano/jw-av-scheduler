@@ -9,7 +9,7 @@ import type { MeetingPart, ParsedMeeting, AVPosition } from '../types';
 import { extractPDFText, detectMeetingType } from './pdf-extractor.js';
 import { parseMidweekMeetings } from './midweek-parser.js';
 import { parseWeekendMeetings, parseWeekendText } from './weekend-parser.js';
-import { getWTConductor, getBrotherByName } from '../config/brothers.js';
+import { getWTConductor } from '../config/brothers.js';
 import { meetingPartConstraints } from '../config/constraints.js';
 
 /**
@@ -39,14 +39,10 @@ export async function parseHourglassPDFs(
 
   // Verify PDF types
   if (detectMeetingType(midweekResult.text) !== 'midweek') {
-    console.warn(
-      `Warning: ${midweekPdfPath} may not be a midweek meeting PDF`
-    );
+    console.warn(`Warning: ${midweekPdfPath} may not be a midweek meeting PDF`);
   }
   if (detectMeetingType(weekendResult.text) !== 'weekend') {
-    console.warn(
-      `Warning: ${weekendPdfPath} may not be a weekend meeting PDF`
-    );
+    console.warn(`Warning: ${weekendPdfPath} may not be a weekend meeting PDF`);
   }
 
   // Parse meetings
@@ -57,7 +53,11 @@ export async function parseHourglassPDFs(
   const weekendRawData = parseWeekendText(weekendResult.text);
 
   // Combine into weekly data
-  return combineWeeklyMeetings(midweekMeetings, weekendMeetings, weekendRawData);
+  return combineWeeklyMeetings(
+    midweekMeetings,
+    weekendMeetings,
+    weekendRawData
+  );
 }
 
 /**
@@ -99,7 +99,9 @@ function combineWeeklyMeetings(
     const weekend = findMatchingWeekendMeeting(midweek.date, weekendMeetings);
 
     if (!weekend) {
-      console.warn(`No matching weekend meeting found for midweek ${midweek.date}`);
+      console.warn(
+        `No matching weekend meeting found for midweek ${midweek.date}`
+      );
       continue;
     }
 
@@ -124,10 +126,8 @@ function combineWeeklyMeetings(
     }
 
     // Calculate unavailable brothers
-    const { unavailableForAV, unavailableForMic } = calculateUnavailableBrothers(
-      midweek.parts,
-      weekendPartsWithWT
-    );
+    const { unavailableForAV, unavailableForMic } =
+      calculateUnavailableBrothers(midweek.parts, weekendPartsWithWT);
 
     weeks.push({
       weekOf: midweek.date,

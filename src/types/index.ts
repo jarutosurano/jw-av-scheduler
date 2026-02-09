@@ -1,7 +1,11 @@
 /**
  * Brother privilege levels in the congregation
  */
-export type Privilege = 'elder' | 'ministerial_servant' | 'publisher' | 'unbaptized';
+export type Privilege =
+  | 'elder'
+  | 'ministerial_servant'
+  | 'publisher'
+  | 'unbaptized';
 
 /**
  * AV assignment positions
@@ -30,6 +34,7 @@ export type RestrictionType =
   | 'no_video'
   | 'no_av_assistant'
   | 'no_mic'
+  | 'no_frontStage'
   | 'no_entrance'
   | 'no_auditorium'
   | 'mic_once_monthly';
@@ -89,7 +94,20 @@ export type PartConstraint = 'no_av' | 'no_mic' | 'none';
 /**
  * Special event type for a week
  */
-export type SpecialEventType = 'memorial' | 'circuit_assembly' | 'regional_convention' | 'other';
+export type SpecialEventType =
+  | 'memorial'
+  | 'circuit_assembly'
+  | 'regional_convention'
+  | 'other';
+
+/**
+ * Simplified meeting part for storage in schedule JSON
+ */
+export interface ScheduleMeetingPart {
+  partType: MeetingPartType;
+  partTitle: string;
+  assignedBrother: string | null;
+}
 
 /**
  * Weekly AV schedule (Friday + Sunday)
@@ -104,6 +122,11 @@ export interface WeeklySchedule {
     noMic: string[];
   };
   conflicts: string[];
+  /** Meeting parts from Hourglass PDFs */
+  meetingParts?: {
+    midweek: ScheduleMeetingPart[];
+    weekend: ScheduleMeetingPart[];
+  };
   /** Special event note (e.g., "Memorial", "Circuit Assembly") */
   note?: string;
   /** If true, only weekend meeting (no midweek) */

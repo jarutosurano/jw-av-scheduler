@@ -1,103 +1,361 @@
 {
   "month": "2026-02",
-  "generated": "2026-01-30T19:03:08.657Z",
+  "generated": "2026-02-09T05:53:06.556Z",
   "weeks": [
     {
       "weekOf": "2026-02-13",
       "midweekDate": "2026-02-13",
       "weekendDate": "2026-02-15",
       "assignments": {
-        "audio": "zach-lucero",
-        "video": "matt-mancuso",
-        "avAssistant": "raffy-mondares",
-        "rightMic": "melky-basanes",
-        "leftMic": "abraham-penera",
-        "frontStage": "gally-villanueva",
-        "auditorium": "herman-lucero",
-        "entrance1": "edgar-silverio",
-        "entrance2": "jayr-sullano"
+        "audio": "john-mahor",
+        "video": "zach-lucero",
+        "avAssistant": "edmer-sapla",
+        "rightMic": "cezar-macasieb",
+        "leftMic": "xian-salazar",
+        "frontStage": "raffy-mondares",
+        "auditorium": "jayr-sullano",
+        "entrance1": "jared-nieva",
+        "entrance2": "edgar-silverio"
       },
       "unavailable": {
         "noAV": [
           "Quinol, Randino",
           "Cabusas, Mike Dandel",
+          "Villanueva, Sir Galahad",
+          "Mancuso, Matthew",
           "Jonas Santiso"
         ],
         "noMic": [
+          "Silverio, Edgardo",
           "Sullano, Jayr P.",
           "Nieva, Jared M.",
-          "Mancuso, Matthew",
-          "Arugay, Ralph",
-          "Penera, Abraham",
           "Villanueva, Sir Galahad",
           "Lucero, Herman"
         ]
       },
-      "conflicts": []
+      "conflicts": [],
+      "meetingParts": {
+        "midweek": [
+          {
+            "partType": "midweek_chairman",
+            "partTitle": "Chairman",
+            "assignedBrother": "Quinol, Randino"
+          },
+          {
+            "partType": "opening_prayer",
+            "partTitle": "Opening Prayer",
+            "assignedBrother": "Basanes, Melquisidecks"
+          },
+          {
+            "partType": "treasures_talk",
+            "partTitle": "10-min Treasures Talk",
+            "assignedBrother": "Silverio, Edgardo"
+          },
+          {
+            "partType": "spiritual_gems",
+            "partTitle": "Spiritual Gems",
+            "assignedBrother": "Sullano, Jayr P."
+          },
+          {
+            "partType": "bible_reading",
+            "partTitle": "Bible Reading",
+            "assignedBrother": "Nieva, Jared M."
+          },
+          {
+            "partType": "student_talk",
+            "partTitle": "3-min Starting a Conversation",
+            "assignedBrother": "Mancuso, Matthew"
+          },
+          {
+            "partType": "student_talk",
+            "partTitle": "3-min Starting a Conversation",
+            "assignedBrother": "Arugay, Ralph"
+          },
+          {
+            "partType": "student_talk",
+            "partTitle": "5-min Talk",
+            "assignedBrother": "Penera, Abraham"
+          },
+          {
+            "partType": "living_as_christians",
+            "partTitle": "15-min Local Needs",
+            "assignedBrother": "Santiso, Jonas"
+          },
+          {
+            "partType": "cbs_chairman",
+            "partTitle": "CBS Conductor",
+            "assignedBrother": "Cabusas, Mike Dandel"
+          },
+          {
+            "partType": "cbs_reader",
+            "partTitle": "CBS Reader",
+            "assignedBrother": "Villanueva, Sir Galahad"
+          },
+          {
+            "partType": "closing_prayer",
+            "partTitle": "Closing Prayer",
+            "assignedBrother": "Penera, Abraham"
+          }
+        ],
+        "weekend": [
+          {
+            "partType": "weekend_chairman",
+            "partTitle": "Chairman",
+            "assignedBrother": "Villanueva, Sir Galahad"
+          },
+          {
+            "partType": "public_talk",
+            "partTitle": "Paano Ka Makikinabang sa mga Turo ni Jesus?",
+            "assignedBrother": "Mancuso, Matthew"
+          },
+          {
+            "partType": "wt_reader",
+            "partTitle": "Watchtower Reader",
+            "assignedBrother": "Lucero, Herman"
+          },
+          {
+            "partType": "closing_prayer",
+            "partTitle": "Closing Prayer",
+            "assignedBrother": "Arugay, Ralph"
+          },
+          {
+            "partType": "wt_conductor",
+            "partTitle": "WT Conductor",
+            "assignedBrother": "Jonas Santiso"
+          }
+        ]
+      }
     },
     {
       "weekOf": "2026-02-20",
       "midweekDate": "2026-02-20",
       "weekendDate": "2026-02-22",
       "assignments": {
-        "audio": "dandel-cabusas",
-        "video": "zach-lucero",
-        "avAssistant": "randy-quinol",
-        "rightMic": "edmer-sapla",
-        "leftMic": "jared-nieva",
-        "frontStage": "ralph-arugay",
-        "auditorium": "matt-mancuso",
-        "entrance1": "cezar-macasieb",
-        "entrance2": "john-mahor"
+        "audio": "ralph-arugay",
+        "video": "john-mahor",
+        "avAssistant": "edmer-sapla",
+        "rightMic": "zach-lucero",
+        "leftMic": "cezar-macasieb",
+        "frontStage": "herman-lucero",
+        "auditorium": "randy-quinol",
+        "entrance1": "jayr-sullano",
+        "entrance2": "jared-nieva"
       },
       "unavailable": {
         "noAV": [
           "Mondares, Rafael",
           "Basanes, Melquisidecks",
+          "Mancuso, Matthew",
           "Jonas Santiso"
         ],
         "noMic": [
+          "Nieva, Jared M.",
           "Villanueva, Sir Galahad",
           "Cabigao, Genesis",
-          "Silverio, Edgardo",
           "Sullano, Jayr P.",
-          "Mancuso, Matthew",
-          "Basanes, Melquisidecks",
           "Penera, Abraham"
         ]
       },
-      "conflicts": []
+      "conflicts": [],
+      "meetingParts": {
+        "midweek": [
+          {
+            "partType": "midweek_chairman",
+            "partTitle": "Chairman",
+            "assignedBrother": "Mondares, Rafael"
+          },
+          {
+            "partType": "opening_prayer",
+            "partTitle": "Opening Prayer",
+            "assignedBrother": "Mancuso, Matthew"
+          },
+          {
+            "partType": "treasures_talk",
+            "partTitle": "10-min Treasures Talk",
+            "assignedBrother": "Nieva, Jared M."
+          },
+          {
+            "partType": "spiritual_gems",
+            "partTitle": "Spiritual Gems",
+            "assignedBrother": "Villanueva, Sir Galahad"
+          },
+          {
+            "partType": "bible_reading",
+            "partTitle": "Bible Reading",
+            "assignedBrother": "Cabigao, Genesis"
+          },
+          {
+            "partType": "student_talk",
+            "partTitle": "5-min Explain Your Beliefs",
+            "assignedBrother": "Silverio, Edgardo"
+          },
+          {
+            "partType": "living_as_christians",
+            "partTitle": "15-min “Kanino Ka Ba Umaasa?”",
+            "assignedBrother": "Penera, Abraham"
+          },
+          {
+            "partType": "cbs_chairman",
+            "partTitle": "CBS Conductor",
+            "assignedBrother": "Basanes, Melquisidecks"
+          },
+          {
+            "partType": "cbs_reader",
+            "partTitle": "CBS Reader",
+            "assignedBrother": "Sullano, Jayr P."
+          },
+          {
+            "partType": "closing_prayer",
+            "partTitle": "Closing Prayer",
+            "assignedBrother": "Cabusas, Mike Dandel"
+          }
+        ],
+        "weekend": [
+          {
+            "partType": "weekend_chairman",
+            "partTitle": "Chairman",
+            "assignedBrother": "Mancuso, Matthew"
+          },
+          {
+            "partType": "public_talk",
+            "partTitle": "Gamitin ang Lahat ng Taglay Mo Para Luwalhatiin ang Diyos",
+            "assignedBrother": "Basanes, Melquisidecks"
+          },
+          {
+            "partType": "wt_reader",
+            "partTitle": "Watchtower Reader",
+            "assignedBrother": "Penera, Abraham"
+          },
+          {
+            "partType": "closing_prayer",
+            "partTitle": "Closing Prayer",
+            "assignedBrother": "Santiso, Jonas"
+          },
+          {
+            "partType": "wt_conductor",
+            "partTitle": "WT Conductor",
+            "assignedBrother": "Jonas Santiso"
+          }
+        ]
+      }
     },
     {
       "weekOf": "2026-02-27",
       "midweekDate": "2026-02-27",
       "weekendDate": "2026-03-01",
       "assignments": {
-        "audio": "raffy-mondares",
-        "video": "gally-villanueva",
+        "audio": "john-mahor",
+        "video": "jayr-sullano",
         "avAssistant": "zach-lucero",
-        "rightMic": "xian-salazar",
-        "leftMic": "melky-basanes",
-        "frontStage": "abraham-penera",
-        "auditorium": "jayr-sullano",
-        "entrance1": "herman-lucero",
-        "entrance2": "dandel-cabusas"
+        "rightMic": "dandel-cabusas",
+        "leftMic": "gally-villanueva",
+        "frontStage": "randy-quinol",
+        "auditorium": "edmer-sapla",
+        "entrance1": "cezar-macasieb",
+        "entrance2": "raffy-mondares"
       },
       "unavailable": {
         "noAV": [
           "Silverio, Edgardo",
           "Santiso, Jonas",
+          "Arugay, Ralph",
+          "Penera, Abraham",
           "Jonas Santiso"
         ],
         "noMic": [
+          "Sapla, Edmer",
           "Mancuso, Matthew",
           "Arugay, Ralph",
-          "Penera, Abraham",
-          "Lucero, Herman",
           "Nieva, Jared M."
         ]
       },
-      "conflicts": []
+      "conflicts": [],
+      "meetingParts": {
+        "midweek": [
+          {
+            "partType": "midweek_chairman",
+            "partTitle": "Chairman",
+            "assignedBrother": "Silverio, Edgardo"
+          },
+          {
+            "partType": "opening_prayer",
+            "partTitle": "Opening Prayer",
+            "assignedBrother": "Macasieb, Cezar"
+          },
+          {
+            "partType": "treasures_talk",
+            "partTitle": "10-min Treasures Talk",
+            "assignedBrother": "Sapla, Edmer"
+          },
+          {
+            "partType": "spiritual_gems",
+            "partTitle": "Spiritual Gems",
+            "assignedBrother": "Mancuso, Matthew"
+          },
+          {
+            "partType": "bible_reading",
+            "partTitle": "Bible Reading",
+            "assignedBrother": "Arugay, Ralph"
+          },
+          {
+            "partType": "student_talk",
+            "partTitle": "2-min Starting a Conversation",
+            "assignedBrother": "Penera, Abraham"
+          },
+          {
+            "partType": "student_talk",
+            "partTitle": "2-min Starting a Conversation",
+            "assignedBrother": "Lucero, Herman"
+          },
+          {
+            "partType": "living_as_christians",
+            "partTitle": "15-min Taunang Ulat ng Paglilingkod",
+            "assignedBrother": "Mondares, Rafael"
+          },
+          {
+            "partType": "cbs_chairman",
+            "partTitle": "CBS Conductor",
+            "assignedBrother": "Santiso, Jonas"
+          },
+          {
+            "partType": "cbs_reader",
+            "partTitle": "CBS Reader",
+            "assignedBrother": "Nieva, Jared M."
+          },
+          {
+            "partType": "closing_prayer",
+            "partTitle": "Closing Prayer",
+            "assignedBrother": "Basanes, Melquisidecks"
+          }
+        ],
+        "weekend": [
+          {
+            "partType": "weekend_chairman",
+            "partTitle": "Chairman",
+            "assignedBrother": "Arugay, Ralph"
+          },
+          {
+            "partType": "public_talk",
+            "partTitle": "Mamuhay Para Gawin ang Kalooban ng Diyos, Hindi ang sa Atin",
+            "assignedBrother": "Penera, Abraham"
+          },
+          {
+            "partType": "wt_reader",
+            "partTitle": "Watchtower Reader",
+            "assignedBrother": "Nieva, Jared M."
+          },
+          {
+            "partType": "closing_prayer",
+            "partTitle": "Closing Prayer",
+            "assignedBrother": "Silverio, Edgardo"
+          },
+          {
+            "partType": "wt_conductor",
+            "partTitle": "WT Conductor",
+            "assignedBrother": "Jonas Santiso"
+          }
+        ]
+      }
     }
   ]
 }

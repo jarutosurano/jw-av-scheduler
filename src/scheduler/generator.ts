@@ -9,10 +9,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { MonthlySchedule, WeeklySchedule } from '../types';
-import { parseHourglassPDFs, type WeeklyMeetingData } from '../parser/index.js';
-import { loadHistory, saveHistory, clearMonthHistory, type HistoryData } from './history.js';
+import { parseHourglassPDFs } from '../parser/index.js';
+import { loadHistory, saveHistory, clearMonthHistory } from './history.js';
 import {
-  scheduleWeek,
   scheduleMultipleWeeks,
   validateSchedule,
   formatScheduleForDisplay,
@@ -20,6 +19,7 @@ import {
   type SchedulingResult,
 } from './engine.js';
 import { positionDisplayNames } from '../config/constraints.js';
+import { getSpecialDatesForMonth } from '../config/special-dates.js';
 
 /**
  * Special week note
@@ -89,45 +89,104 @@ export async function generateMonthlySchedule(
   let monthWeeks = weeks.filter((w) => w.weekOf.startsWith(month));
   console.log(`Found ${monthWeeks.length} weeks in ${month}`);
 
-  // Add manual weeks (e.g., Memorial with only weekend)
+  // Apply special dates from config (Memorial, CKT Assembly, etc.)
+  const specialDatesForMonth = getSpecialDatesForMonth(month);
+  if (specialDatesForMonth.length > 0) {
+    console.log(
+      `Applying ${specialDatesForMonth.length} special date(s) from config...`
+    );
+    for (const sd of specialDatesForMonth) {
+      console.log(
+        `  ${sd.date}: ${sd.note}${sd.noMeeting ? ' (no meeting)' : ''}${sd.weekendOnly ? ' (weekend only)' : ''}`
+      );
+
+      // Remove any duplicate/mismatched PDF weeks for this date
+      if (sd.noMeeting) {
+        monthWeeks = monthWeeks.filter((w) => w.weekOf !== sd.date);
+      }
+
+      // Calculate weekend date if not provided (Friday + 2 days = Sunday)
+      const weekendDate =
+        sd.weekendDate ||
+        (() => {
+          const d = new Date(sd.date + 'T00:00:00');
+          d.setDate(d.getDate() + 2);
+          return d.toISOString().split('T')[0];
+        })();
+
+      // Add/ensure this week exists
+      const exists = monthWeeks.some((w) => w.weekOf === sd.date);
+      if (!exists) {
+        monthWeeks.push({
+          weekOf: sd.date,
+          midweekDate: sd.date,
+          weekendDate,
+          midweekParts: [],
+          weekendParts: [],
+          wtConductor: null,
+          unavailableForAV: [],
+          unavailableForMic: [],
+        });
+      }
+
+      // Merge into weekNotes so flags get applied later
+      if (!options.weekNotes) {
+        options.weekNotes = new Map();
+      }
+      if (!options.weekNotes.has(sd.date)) {
+        options.weekNotes.set(sd.date, {
+          date: sd.date,
+          note: sd.note,
+          weekendOnly: sd.weekendOnly || false,
+          noMeeting: sd.noMeeting || false,
+        });
+      }
+    }
+    monthWeeks.sort((a, b) => a.weekOf.localeCompare(b.weekOf));
+  }
+
+  // Skip specified weeks (CLI override)
+  if (options.skipExistingWeeks?.length) {
+    const beforeCount = monthWeeks.length;
+    monthWeeks = monthWeeks.filter(
+      (w) => !options.skipExistingWeeks!.includes(w.weekOf)
+    );
+    console.log(
+      `Skipping ${beforeCount - monthWeeks.length} weeks (already scheduled)`
+    );
+  }
+
+  // Add manual weeks from CLI (e.g., additional overrides)
   if (options.manualWeeks?.length) {
     for (const manualWeek of options.manualWeeks) {
-      // Check if this week already exists
-      const exists = monthWeeks.some((w) => w.weekOf === manualWeek.midweekDate);
+      const exists = monthWeeks.some(
+        (w) => w.weekOf === manualWeek.midweekDate
+      );
       if (!exists) {
         console.log(`Adding manual week: ${manualWeek.midweekDate}`);
         monthWeeks.push({
           weekOf: manualWeek.midweekDate,
           midweekDate: manualWeek.midweekDate,
           weekendDate: manualWeek.weekendDate,
+          midweekParts: [],
+          weekendParts: [],
+          wtConductor: null,
           unavailableForAV: [],
           unavailableForMic: [],
         });
       }
     }
-    // Sort weeks by date
     monthWeeks.sort((a, b) => a.weekOf.localeCompare(b.weekOf));
   }
 
-  // Skip specified weeks (e.g., Feb 6-8 already has schedule)
   let weeksToSchedule = monthWeeks;
-  if (options.skipExistingWeeks?.length) {
-    weeksToSchedule = monthWeeks.filter(
-      (w) => !options.skipExistingWeeks!.includes(w.weekOf)
-    );
-    console.log(
-      `Skipping ${monthWeeks.length - weeksToSchedule.length} weeks (already scheduled)`
-    );
-  }
 
   // Load history
   let history = loadHistory();
 
-  // Clear history for this month if requested
-  if (options.clearHistory) {
-    console.log(`Clearing existing history for ${month}...`);
-    clearMonthHistory(history, month);
-  }
+  // Always clear history for this month before regenerating
+  // This prevents stale entries from previous runs affecting the schedule
+  clearMonthHistory(history, month);
 
   // Generate schedules
   console.log('Generating schedules...');
@@ -245,11 +304,15 @@ function printScheduleSummary(results: SchedulingResult[]): void {
     const { schedule } = result;
     const formatted = formatScheduleForDisplay(schedule);
 
-    console.log(`\nWeek of ${schedule.weekOf} (${schedule.midweekDate} & ${schedule.weekendDate})`);
+    console.log(
+      `\nWeek of ${schedule.weekOf} (${schedule.midweekDate} & ${schedule.weekendDate})`
+    );
     console.log('-'.repeat(50));
 
     for (const [position, name] of Object.entries(formatted)) {
-      const displayName = positionDisplayNames[position as keyof typeof positionDisplayNames] || position;
+      const displayName =
+        positionDisplayNames[position as keyof typeof positionDisplayNames] ||
+        position;
       console.log(`  ${displayName.padEnd(22)} ${name}`);
     }
 
@@ -265,7 +328,10 @@ function printScheduleSummary(results: SchedulingResult[]): void {
 /**
  * Load an existing schedule from file
  */
-export function loadScheduleFromFile(month: string, dir?: string): MonthlySchedule | null {
+export function loadScheduleFromFile(
+  month: string,
+  dir?: string
+): MonthlySchedule | null {
   const filePath = path.resolve(dir || 'schedules', `${month}.json`);
 
   if (!fs.existsSync(filePath)) {
@@ -303,4 +369,8 @@ export function listGeneratedSchedules(dir?: string): string[] {
 
 // Re-export for convenience
 export { loadHistory, saveHistory } from './history.js';
-export { scheduleWeek, validateSchedule, formatScheduleForDisplay } from './engine.js';
+export {
+  scheduleWeek,
+  validateSchedule,
+  formatScheduleForDisplay,
+} from './engine.js';

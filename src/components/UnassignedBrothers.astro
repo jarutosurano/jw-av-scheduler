@@ -1,0 +1,256 @@
+---
+import type {
+  WeeklySchedule,
+  ScheduleMeetingPart,
+  Brother,
+  AVPosition,
+} from '../types';
+import { getActiveBrothers } from '../config/brothers';
+import { formatDateRange } from '../lib/schedules';
+import { doesNameMatchBrother } from '../scheduler/availability';
+import { positionDisplayNames } from '../config/constraints';
+
+interface Props {
+  weeks: WeeklySchedule[];
+}
+
+const { weeks } = Astro.props;
+const allBrothers = getActiveBrothers().sort((a, b) =>
+  a.lastName.localeCompare(b.lastName)
+);
+
+interface BrotherWeekInfo {
+  name: string;
+  midweek: string;
+  weekend: string;
+}
+
+// Find AV position for a brother
+function findAVPosition(brother: Brother, week: WeeklySchedule): string | null {
+  for (const [position, brotherId] of Object.entries(week.assignments)) {
+    if (brotherId === brother.id) {
+      return positionDisplayNames[position as AVPosition];
+    }
+  }
+  return null;
+}
+
+// Find meeting part for a brother
+function findMeetingPart(
+  brother: Brother,
+  parts: ScheduleMeetingPart[]
+): string | null {
+  for (const part of parts) {
+    if (
+      part.assignedBrother &&
+      doesNameMatchBrother(part.assignedBrother, brother)
+    ) {
+      if (part.partType === 'public_talk') return 'PT Speaker';
+      return part.partTitle;
+    }
+  }
+  return null;
+}
+
+// Build info for all brothers for a given week
+function getAllBrothersInfo(week: WeeklySchedule): BrotherWeekInfo[] {
+  if (week.noMeeting) return [];
+
+  return allBrothers.map((b) => {
+    const avPosition = findAVPosition(b, week);
+    const midweekPart = week.weekendOnly
+      ? null
+      : findMeetingPart(b, week.meetingParts?.midweek || []);
+    const weekendPart = findMeetingPart(b, week.meetingParts?.weekend || []);
+
+    // Combine AV + meeting part for each column
+    const midweekItems: string[] = [];
+    if (avPosition) midweekItems.push(avPosition);
+    if (midweekPart) midweekItems.push(midweekPart);
+
+    const weekendItems: string[] = [];
+    if (avPosition) weekendItems.push(avPosition);
+    if (weekendPart) weekendItems.push(weekendPart);
+
+    return {
+      name: b.fullName,
+      midweek: week.weekendOnly
+        ? '—'
+        : midweekItems.length > 0
+          ? midweekItems.join(', ')
+          : 'None',
+      weekend: weekendItems.length > 0 ? weekendItems.join(', ') : 'None',
+    };
+  });
+}
+---
+
+<div class="unassigned-section">
+  <h3 class="section-title">Meeting Assignments</h3>
+  <div class="weeks-grid">
+    {
+      weeks.map((week) => {
+        if (week.noMeeting) return null;
+        const brothers = getAllBrothersInfo(week);
+        return (
+          <div class="week-card">
+            <div class="week-header">
+              {formatDateRange(week.midweekDate, week.weekendDate)}
+              {week.weekendOnly && <span class="badge">Weekend Only</span>}
+            </div>
+            <table class="assignments-table">
+              <thead>
+                <tr>
+                  <th>Brother</th>
+                  <th>Midweek</th>
+                  <th>Weekend</th>
+                </tr>
+              </thead>
+              <tbody>
+                {brothers.map((b, idx) => (
+                  <tr class:list={[{ 'alt-row': idx % 2 === 1 }]}>
+                    <td class="name-cell">{b.name}</td>
+                    <td
+                      class:list={[
+                        'part-cell',
+                        {
+                          'no-part': b.midweek === 'None' || b.midweek === '—',
+                        },
+                      ]}
+                    >
+                      {b.midweek}
+                    </td>
+                    <td
+                      class:list={[
+                        'part-cell',
+                        { 'no-part': b.weekend === 'None' },
+                      ]}
+                    >
+                      {b.weekend}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      })
+    }
+  </div>
+</div>
+
+<style>
+  .unassigned-section {
+    margin-top: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+  }
+
+  .weeks-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .week-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .week-header {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--table-header-bg);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .badge {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    background: var(--primary-bg);
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  .assignments-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+  }
+
+  .assignments-table th {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .assignments-table td {
+    padding: 0.375rem 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .assignments-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .alt-row {
+    background: var(--table-header-bg);
+  }
+
+  .name-cell {
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  .part-cell {
+    color: var(--text-primary);
+    font-size: 0.75rem;
+  }
+
+  .no-part {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .assignments-table tbody tr:hover {
+    background: var(--table-row-hover);
+  }
+
+  @media (max-width: 900px) {
+    .weeks-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .assignments-table {
+      font-size: 0.75rem;
+    }
+
+    .assignments-table th,
+    .assignments-table td {
+      padding: 0.3rem 0.5rem;
+    }
+  }
+</style>

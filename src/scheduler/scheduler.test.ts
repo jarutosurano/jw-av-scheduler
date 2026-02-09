@@ -3,7 +3,6 @@ import type { WeeklyMeetingData } from '../parser/index.js';
 import type { HistoryData } from './history.js';
 import { getAvailableBrothersForPosition } from './availability.js';
 import {
-  loadHistory,
   addAssignment,
   canXianDoMicThisMonth,
   sortBrothersByFairness,
@@ -18,7 +17,11 @@ const mockWeek: WeeklyMeetingData = {
   midweekParts: [],
   weekendParts: [],
   wtConductor: 'Jonas Santiso',
-  unavailableForAV: ['Quinol, Randino', 'Cabusas, Mike Dandel', 'Jonas Santiso'],
+  unavailableForAV: [
+    'Quinol, Randino',
+    'Cabusas, Mike Dandel',
+    'Jonas Santiso',
+  ],
   unavailableForMic: [
     'Sullano, Jayr P.',
     'Nieva, Jared M.',

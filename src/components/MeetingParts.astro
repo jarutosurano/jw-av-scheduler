@@ -1,0 +1,296 @@
+---
+import type { WeeklySchedule, MeetingPartType } from '../types';
+import { formatDateRange } from '../lib/schedules';
+
+interface Props {
+  weeks: WeeklySchedule[];
+}
+
+const { weeks } = Astro.props;
+
+// Display-friendly labels for part types
+const partTypeLabels: Record<MeetingPartType, string> = {
+  midweek_chairman: 'Chairman',
+  opening_prayer: 'Opening Prayer',
+  treasures_talk: 'Treasures Talk',
+  spiritual_gems: 'Spiritual Gems',
+  bible_reading: 'Bible Reading',
+  student_talk: 'Student Talk',
+  living_as_christians: 'Living as Christians',
+  cbs_chairman: 'CBS Conductor',
+  cbs_reader: 'CBS Reader',
+  closing_prayer: 'Closing Prayer',
+  weekend_chairman: 'Chairman',
+  public_talk: 'Public Talk',
+  wt_conductor: 'WT Conductor',
+  wt_reader: 'WT Reader',
+};
+
+// Parts to show (skip opening/closing prayers, they're less relevant)
+const midweekPartsToShow: MeetingPartType[] = [
+  'midweek_chairman',
+  'treasures_talk',
+  'spiritual_gems',
+  'bible_reading',
+  'student_talk',
+  'cbs_chairman',
+  'cbs_reader',
+];
+
+const weekendPartsToShow: MeetingPartType[] = [
+  'weekend_chairman',
+  'public_talk',
+  'wt_conductor',
+  'wt_reader',
+];
+---
+
+<div class="meeting-parts-section">
+  <h3 class="section-title">Meeting Assignments</h3>
+  <div class="meeting-types">
+    <!-- Midweek -->
+    <div class="meeting-type">
+      <h4 class="meeting-type-title">
+        Midweek Meeting <span class="day-label">(Friday)</span>
+      </h4>
+      <div class="parts-table-wrapper">
+        <table class="parts-table">
+          <thead>
+            <tr>
+              <th class="part-col">Part</th>
+              {
+                weeks.map(
+                  (week) =>
+                    !week.noMeeting && (
+                      <th class="name-col">
+                        {week.weekendOnly ? (
+                          <span class="no-midweek">No Midweek</span>
+                        ) : (
+                          formatDateRange(
+                            week.midweekDate,
+                            week.weekendDate
+                          ).split(' & ')[0]
+                        )}
+                      </th>
+                    )
+                )
+              }
+            </tr>
+          </thead>
+          <tbody>
+            {
+              midweekPartsToShow.map((partType, idx) => (
+                <tr class:list={[{ 'alt-row': idx % 2 === 1 }]}>
+                  <td class="part-label">{partTypeLabels[partType]}</td>
+                  {weeks.map((week) => {
+                    if (week.noMeeting) return null;
+                    if (week.weekendOnly) {
+                      return idx === 0 ? (
+                        <td
+                          class="no-meeting-cell"
+                          rowspan={midweekPartsToShow.length}
+                        >
+                          —
+                        </td>
+                      ) : null;
+                    }
+                    const parts = week.meetingParts?.midweek || [];
+                    // For student_talk, there may be multiple, show all
+                    const matchingParts = parts.filter(
+                      (p) => p.partType === partType
+                    );
+                    const name =
+                      matchingParts.length > 0
+                        ? matchingParts
+                            .map((p) => p.assignedBrother || '—')
+                            .join(', ')
+                        : '—';
+                    return <td class="name-cell">{name}</td>;
+                  })}
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Weekend -->
+    <div class="meeting-type">
+      <h4 class="meeting-type-title">
+        Weekend Meeting <span class="day-label">(Sunday)</span>
+      </h4>
+      <div class="parts-table-wrapper">
+        <table class="parts-table">
+          <thead>
+            <tr>
+              <th class="part-col">Part</th>
+              {
+                weeks.map(
+                  (week) =>
+                    !week.noMeeting && (
+                      <th class="name-col">
+                        {formatDateRange(week.midweekDate, week.weekendDate)
+                          .split(' & ')
+                          .pop()}
+                      </th>
+                    )
+                )
+              }
+            </tr>
+          </thead>
+          <tbody>
+            {
+              weekendPartsToShow.map((partType, idx) => (
+                <tr class:list={[{ 'alt-row': idx % 2 === 1 }]}>
+                  <td class="part-label">{partTypeLabels[partType]}</td>
+                  {weeks.map((week) => {
+                    if (week.noMeeting) return null;
+                    const parts = week.meetingParts?.weekend || [];
+                    const matchingPart = parts.find(
+                      (p) => p.partType === partType
+                    );
+                    const name = matchingPart?.assignedBrother || '—';
+                    return <td class="name-cell">{name}</td>;
+                  })}
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .meeting-parts-section {
+    margin-top: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+  }
+
+  .meeting-types {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .meeting-type {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .meeting-type-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--table-header-bg);
+  }
+
+  .day-label {
+    font-weight: 400;
+    color: var(--text-secondary);
+    font-size: 0.8125rem;
+  }
+
+  .parts-table-wrapper {
+    overflow-x: auto;
+  }
+
+  .parts-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+  }
+
+  .parts-table th,
+  .parts-table td {
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .parts-table thead {
+    background: var(--table-header-bg);
+  }
+
+  .parts-table th {
+    font-weight: 600;
+    font-size: 0.8125rem;
+    color: var(--text-primary);
+  }
+
+  .part-col {
+    min-width: 130px;
+    white-space: nowrap;
+  }
+
+  .name-col {
+    text-align: center !important;
+    min-width: 120px;
+  }
+
+  .part-label {
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  .name-cell {
+    text-align: center;
+    color: var(--text-primary);
+  }
+
+  .no-meeting-cell {
+    text-align: center;
+    color: var(--text-muted);
+    vertical-align: middle;
+  }
+
+  .no-midweek {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .alt-row {
+    background: var(--table-header-bg);
+  }
+
+  .parts-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .parts-table tbody tr:hover {
+    background: var(--table-row-hover);
+  }
+
+  @media (max-width: 768px) {
+    .parts-table {
+      font-size: 0.75rem;
+    }
+
+    .parts-table th,
+    .parts-table td {
+      padding: 0.375rem 0.5rem;
+    }
+
+    .part-col {
+      min-width: 100px;
+    }
+
+    .name-col {
+      min-width: 90px;
+    }
+  }
+</style>

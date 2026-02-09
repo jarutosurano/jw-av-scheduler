@@ -1,0 +1,239 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { specialDates } from '../config/special-dates';
+
+// Group special dates by year
+const datesByYear = new Map<string, typeof specialDates>();
+for (const sd of specialDates) {
+  const year = sd.date.substring(0, 4);
+  if (!datesByYear.has(year)) datesByYear.set(year, []);
+  datesByYear.get(year)!.push(sd);
+}
+const years = Array.from(datesByYear.keys()).sort();
+
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+---
+
+<Layout title="Events" currentPage="events">
+  <div class="container">
+    <header class="page-header">
+      <div>
+        <h1 class="page-title">Events Calendar</h1>
+        <p class="page-subtitle">Special dates that affect meeting schedules</p>
+      </div>
+    </header>
+
+    {
+      years.length === 0 ? (
+        <div class="empty-state">
+          <p>No special dates defined yet.</p>
+          <p class="hint">
+            Add entries to <code>src/config/special-dates.ts</code>
+          </p>
+        </div>
+      ) : (
+        years.map((year) => (
+          <div class="year-section">
+            <h2 class="year-title">{year}</h2>
+            <div class="events-list">
+              {datesByYear.get(year)!.map((sd) => (
+                <div
+                  class:list={[
+                    'event-card',
+                    {
+                      'no-meeting': sd.noMeeting,
+                      'weekend-only': sd.weekendOnly && !sd.noMeeting,
+                    },
+                  ]}
+                >
+                  <div class="event-date">
+                    <span class="event-day">{formatDate(sd.date)}</span>
+                    {sd.weekendDate && (
+                      <span class="event-weekend">
+                        – {formatDate(sd.weekendDate)}
+                      </span>
+                    )}
+                  </div>
+                  <div class="event-info">
+                    <span class="event-name">{sd.note}</span>
+                    <span
+                      class:list={[
+                        'event-badge',
+                        {
+                          'badge-warning': sd.noMeeting,
+                          'badge-info': sd.weekendOnly && !sd.noMeeting,
+                        },
+                      ]}
+                    >
+                      {sd.noMeeting
+                        ? 'No Meeting'
+                        : sd.weekendOnly
+                          ? 'Weekend Only'
+                          : 'Special'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      )
+    }
+
+    <div class="config-note">
+      <p>
+        To add or update events, edit <code>src/config/special-dates.ts</code> and
+        re-generate schedules.
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .year-section {
+    margin-bottom: 2rem;
+  }
+
+  .year-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+  }
+
+  .events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .event-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    border-left: 4px solid var(--primary-color);
+  }
+
+  .event-card.no-meeting {
+    border-left-color: #ef4444;
+  }
+
+  .event-card.weekend-only {
+    border-left-color: #f59e0b;
+  }
+
+  .event-date {
+    display: flex;
+    align-items: baseline;
+    gap: 0.375rem;
+    min-width: 160px;
+  }
+
+  .event-day {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+  }
+
+  .event-weekend {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+  }
+
+  .event-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .event-name {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+  }
+
+  .event-badge {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    white-space: nowrap;
+  }
+
+  .badge-warning {
+    background: #fef2f2;
+    color: #dc2626;
+  }
+
+  .badge-info {
+    background: #fffbeb;
+    color: #d97706;
+  }
+
+  :global(.dark) .badge-warning {
+    background: #451a1a;
+    color: #f87171;
+  }
+
+  :global(.dark) .badge-info {
+    background: #451a00;
+    color: #fbbf24;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-secondary);
+  }
+
+  .empty-state code {
+    background: var(--table-header-bg);
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.8125rem;
+  }
+
+  .hint {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .config-note {
+    margin-top: 2rem;
+    padding: 0.75rem 1rem;
+    background: var(--table-header-bg);
+    border-radius: 0.375rem;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+  }
+
+  .config-note code {
+    background: var(--card-bg);
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.8125rem;
+  }
+
+  @media (max-width: 640px) {
+    .event-card {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .event-info {
+      justify-content: flex-start;
+    }
+  }
+</style>

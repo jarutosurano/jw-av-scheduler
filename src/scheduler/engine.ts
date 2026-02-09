@@ -16,8 +16,15 @@ import {
   sortBrothersByFairness,
   canXianDoMicThisMonth,
   addAssignment,
+  calculateAssignmentScore,
+  removeAssignment,
 } from './history.js';
-import { schedulingPriority, micPositions } from '../config/constraints.js';
+import {
+  schedulingPriority,
+  micPositions,
+  priorityBrotherIds,
+} from '../config/constraints.js';
+import { getBrotherByName } from '../config/brothers.js';
 
 /**
  * Result of scheduling a single week
@@ -66,7 +73,9 @@ export function scheduleWeek(
 
   // Apply forced assignments first
   if (options.forceAssignments) {
-    for (const [position, brotherId] of Object.entries(options.forceAssignments)) {
+    for (const [position, brotherId] of Object.entries(
+      options.forceAssignments
+    )) {
       if (brotherId) {
         assignments[position as AVPosition] = brotherId;
         assignedThisWeek.add(brotherId);
@@ -76,6 +85,22 @@ export function scheduleWeek(
 
   // Get year-month for Xian's monthly limit check
   const yearMonth = week.weekOf.substring(0, 7);
+
+  // Count meeting parts per brother this week
+  // Brothers with more parts get higher penalty for AV (deprioritized)
+  const meetingPartCounts = new Map<string, number>();
+  const allParts = [...(week.midweekParts || []), ...(week.weekendParts || [])];
+  for (const part of allParts) {
+    if (part.assignedBrother) {
+      const brother = getBrotherByName(part.assignedBrother);
+      if (brother) {
+        meetingPartCounts.set(
+          brother.id,
+          (meetingPartCounts.get(brother.id) || 0) + 1
+        );
+      }
+    }
+  }
 
   // Schedule positions in priority order
   for (const position of schedulingPriority) {
@@ -117,11 +142,13 @@ export function scheduleWeek(
     }
 
     // Sort by fairness (least recently assigned first)
+    // Brothers with more meeting parts are deprioritized so unassigned brothers get AV first
     const sortedCandidates = sortBrothersByFairness(
       candidates,
       history,
       position,
-      week.weekOf
+      week.weekOf,
+      meetingPartCounts
     );
 
     if (sortedCandidates.length === 0) {
@@ -138,6 +165,79 @@ export function scheduleWeek(
     addAssignment(history, selectedBrother, position, week.weekOf);
   }
 
+  // Ensure priority brothers (e.g., Zach) are assigned every week
+  for (const priorityId of priorityBrotherIds) {
+    if (assignedThisWeek.has(priorityId)) continue;
+
+    // Find positions this brother is eligible for
+    const eligiblePositions: AVPosition[] = [];
+    for (const pos of schedulingPriority) {
+      const avail = getAvailableBrothersForPosition(pos, week);
+      if (avail.availableBrothers.some((b) => b.id === priorityId)) {
+        eligiblePositions.push(pos);
+      }
+    }
+
+    if (eligiblePositions.length === 0) continue;
+
+    // Find the best position to swap into: pick the position where the current
+    // assignee has the highest score (most recently/frequently assigned)
+    let bestSwapPos: AVPosition | null = null;
+    let bestSwapScore = -Infinity;
+
+    for (const pos of eligiblePositions) {
+      const currentHolder = assignments[pos];
+      if (!currentHolder) continue;
+      // Don't swap out another priority brother
+      if (priorityBrotherIds.includes(currentHolder)) continue;
+
+      const holderScore = calculateAssignmentScore(
+        history,
+        currentHolder,
+        pos,
+        week.weekOf
+      );
+      if (holderScore > bestSwapScore) {
+        bestSwapScore = holderScore;
+        bestSwapPos = pos;
+      }
+    }
+
+    if (bestSwapPos) {
+      const displaced = assignments[bestSwapPos]!;
+      // Remove displaced brother's history entry and assignment
+      removeAssignment(history, displaced, bestSwapPos, week.weekOf);
+      assignedThisWeek.delete(displaced);
+
+      // Assign priority brother
+      assignments[bestSwapPos] = priorityId;
+      assignedThisWeek.add(priorityId);
+      addAssignment(history, priorityId, bestSwapPos, week.weekOf);
+
+      // Try to reassign displaced brother to an unfilled position or lower-priority position
+      for (const fallbackPos of [...schedulingPriority].reverse()) {
+        if (
+          assignments[fallbackPos] &&
+          assignedThisWeek.has(assignments[fallbackPos]!)
+        )
+          continue;
+        if (assignedThisWeek.has(displaced)) break;
+
+        const fallbackAvail = getAvailableBrothersForPosition(
+          fallbackPos,
+          week
+        );
+        if (fallbackAvail.availableBrothers.some((b) => b.id === displaced)) {
+          if (!assignments[fallbackPos]) {
+            assignments[fallbackPos] = displaced;
+            assignedThisWeek.add(displaced);
+            addAssignment(history, displaced, fallbackPos, week.weekOf);
+          }
+        }
+      }
+    }
+  }
+
   // Build the schedule result
   const schedule: WeeklySchedule = {
     weekOf: week.weekOf,
@@ -149,6 +249,18 @@ export function scheduleWeek(
       noMic: week.unavailableForMic,
     },
     conflicts,
+    meetingParts: {
+      midweek: (week.midweekParts || []).map((p) => ({
+        partType: p.partType,
+        partTitle: p.partTitle,
+        assignedBrother: p.assignedBrother,
+      })),
+      weekend: (week.weekendParts || []).map((p) => ({
+        partType: p.partType,
+        partTitle: p.partTitle,
+        assignedBrother: p.assignedBrother,
+      })),
+    },
   };
 
   return {
@@ -197,7 +309,9 @@ export function validateSchedule(schedule: WeeklySchedule): string[] {
 
     // Check if brother is in unavailable list
     if (schedule.unavailable.noAV.includes(brotherId)) {
-      errors.push(`${brotherId} is unavailable for AV but assigned to ${position}`);
+      errors.push(
+        `${brotherId} is unavailable for AV but assigned to ${position}`
+      );
     }
 
     // Check mic-specific unavailability
@@ -205,7 +319,9 @@ export function validateSchedule(schedule: WeeklySchedule): string[] {
       micPositions.includes(position as AVPosition) &&
       schedule.unavailable.noMic.includes(brotherId)
     ) {
-      errors.push(`${brotherId} is unavailable for mic but assigned to ${position}`);
+      errors.push(
+        `${brotherId} is unavailable for mic but assigned to ${position}`
+      );
     }
   }
 
@@ -255,7 +371,10 @@ export function idToDisplayName(brotherId: string): string {
 export function formatScheduleForDisplay(
   schedule: WeeklySchedule
 ): Record<AVPosition, string> {
-  const formatted: Record<AVPosition, string> = {} as Record<AVPosition, string>;
+  const formatted: Record<AVPosition, string> = {} as Record<
+    AVPosition,
+    string
+  >;
 
   for (const [position, brotherId] of Object.entries(schedule.assignments)) {
     formatted[position as AVPosition] = brotherId

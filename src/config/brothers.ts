@@ -30,7 +30,7 @@ export const brothers: Brother[] = [
     lastName: 'Mondares',
     fullName: 'Raffy Mondares',
     privilege: 'elder',
-    restrictions: [],
+    restrictions: ['no_video'],
     active: true,
   },
   {
@@ -39,7 +39,7 @@ export const brothers: Brother[] = [
     lastName: 'Quinol',
     fullName: 'Randy Quinol',
     privilege: 'elder',
-    restrictions: [],
+    restrictions: ['no_video'],
     active: true,
   },
   {
@@ -57,7 +57,7 @@ export const brothers: Brother[] = [
     lastName: 'Basanes',
     fullName: 'Melky Basanes',
     privilege: 'elder',
-    restrictions: [],
+    restrictions: ['no_video'],
     active: true,
   },
   {
@@ -94,7 +94,7 @@ export const brothers: Brother[] = [
     lastName: 'Silverio',
     fullName: 'Edgar Silverio',
     privilege: 'elder',
-    restrictions: [],
+    restrictions: ['no_video'],
     active: true,
   },
 
@@ -114,7 +114,7 @@ export const brothers: Brother[] = [
     lastName: 'Sapla',
     fullName: 'Edmer Sapla',
     privilege: 'ministerial_servant',
-    restrictions: [],
+    restrictions: ['no_video'],
     active: true,
   },
   {
@@ -174,6 +174,8 @@ export const brothers: Brother[] = [
       'no_audio',
       'no_video',
       'no_av_assistant',
+      'no_frontStage',
+      'no_auditorium',
       'no_entrance',
       'mic_once_monthly',
     ],
@@ -189,20 +191,50 @@ export function getBrotherById(id: string): Brother | undefined {
 }
 
 /**
+ * Strip accents/diacritics from a string (e.g., Peñera → Penera)
+ */
+function stripAccents(str: string): string {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+/**
+ * Nickname mappings: config firstName → PDF variations
+ */
+const nicknameMap: Record<string, string[]> = {
+  randy: ['randino'],
+  raffy: ['rafael'],
+  matt: ['matthew'],
+  melky: ['melquisidecks'],
+  gally: ['sir galahad'],
+  dandel: ['mike dandel'],
+};
+
+/**
  * Get brother by full name (case-insensitive, handles PDF name variations)
  */
 export function getBrotherByName(name: string): Brother | undefined {
-  const normalizedName = name.toLowerCase().trim();
+  const normalizedName = stripAccents(name.toLowerCase().trim());
 
   return brothers.find((b) => {
-    const fullNameMatch = b.fullName.toLowerCase() === normalizedName;
-    const lastFirstMatch =
-      `${b.lastName}, ${b.firstName}`.toLowerCase() === normalizedName;
-    const partialMatch =
-      normalizedName.includes(b.lastName.toLowerCase()) &&
-      normalizedName.includes(b.firstName.toLowerCase());
+    const fullName = stripAccents(b.fullName.toLowerCase());
+    const lastName = stripAccents(b.lastName.toLowerCase());
+    const firstName = stripAccents(b.firstName.toLowerCase());
 
-    return fullNameMatch || lastFirstMatch || partialMatch;
+    // Direct matches
+    if (fullName === normalizedName) return true;
+    if (`${lastName}, ${firstName}` === normalizedName) return true;
+    if (normalizedName.includes(lastName) && normalizedName.includes(firstName))
+      return true;
+
+    // Nickname matching: check if PDF name contains a known nickname for this brother
+    if (normalizedName.includes(lastName)) {
+      const nicknames = nicknameMap[firstName] || [];
+      for (const nickname of nicknames) {
+        if (normalizedName.includes(nickname)) return true;
+      }
+    }
+
+    return false;
   });
 }
 
@@ -216,7 +248,9 @@ export function getActiveBrothers(): Brother[] {
 /**
  * Get brothers by privilege
  */
-export function getBrothersByPrivilege(privilege: Brother['privilege']): Brother[] {
+export function getBrothersByPrivilege(
+  privilege: Brother['privilege']
+): Brother[] {
   return brothers.filter((b) => b.privilege === privilege && b.active);
 }
 
@@ -235,7 +269,9 @@ export function getEldersAndMS(): Brother[] {
  * Get the WT Conductor for a given week
  * If primary conductor has public talk, backup takes over
  */
-export function getWTConductor(publicTalkSpeaker: string | null): Brother | undefined {
+export function getWTConductor(
+  publicTalkSpeaker: string | null
+): Brother | undefined {
   const primary = brothers.find((b) => b.isWTConductor === 'primary');
   const backup = brothers.find((b) => b.isWTConductor === 'backup');
 

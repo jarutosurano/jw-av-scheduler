@@ -1,11 +1,15 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import ScheduleTable from '../../components/ScheduleTable.astro';
+import MeetingAssignments from '../../components/MeetingAssignments';
+import type { MeetingWeek } from '../../components/MeetingAssignments';
 import {
   getAvailableMonths,
   loadSchedule,
   formatMonthDisplay,
 } from '../../lib/schedules';
+import { getActiveBrothers } from '../../config/brothers';
+import { doesNameMatchBrother } from '../../scheduler/availability';
 
 export function getStaticPaths() {
   const months = getAvailableMonths();
@@ -29,6 +33,65 @@ const generatedDate = new Date(schedule.generated).toLocaleDateString('en-US', {
   hour: '2-digit',
   minute: '2-digit',
 });
+
+const activeBrothers = getActiveBrothers();
+
+/** Resolve a PDF name (e.g., "Quinol, Randino") to a brother ID (e.g., "randy-quinol") */
+function resolveNameToId(name: string | null): string | null {
+  if (!name) return null;
+  const matched = activeBrothers.find((b) => doesNameMatchBrother(name, b));
+  return matched?.id ?? null;
+}
+
+/** Resolve a list of PDF names to brother IDs */
+function resolveNamesToIds(names: string[]): string[] {
+  const ids: string[] = [];
+  for (const name of names) {
+    const id = resolveNameToId(name);
+    if (id) ids.push(id);
+  }
+  return ids;
+}
+
+// Build data for MeetingAssignments (resolve PDF names to brother IDs)
+const meetingWeeks: MeetingWeek[] = schedule.weeks.map((week) => ({
+  weekOf: week.weekOf,
+  midweekDate: week.midweekDate,
+  weekendDate: week.weekendDate,
+  assignments: week.assignments,
+  meetingParts: {
+    midweek: (week.meetingParts?.midweek || []).map((p) => ({
+      partType: p.partType,
+      partTitle: p.partTitle,
+      brotherId: resolveNameToId(p.assignedBrother),
+    })),
+    weekend: (week.meetingParts?.weekend || []).map((p) => ({
+      partType: p.partType,
+      partTitle: p.partTitle,
+      brotherId: resolveNameToId(p.assignedBrother),
+    })),
+  },
+  unavailable: {
+    noAV: resolveNamesToIds(week.unavailable.noAV),
+    noMic: resolveNamesToIds(week.unavailable.noMic),
+  },
+  noMeeting: week.noMeeting,
+  weekendOnly: week.weekendOnly,
+  note: week.note,
+}));
+
+// Serialize brothers as plain objects for React
+const brotherData = activeBrothers.map((b) => ({
+  id: b.id,
+  firstName: b.firstName,
+  lastName: b.lastName,
+  fullName: b.fullName,
+  privilege: b.privilege,
+  restrictions: b.restrictions,
+  active: b.active,
+}));
+
+const isDev = import.meta.env.DEV;
 ---
 
 <Layout title={monthDisplay} currentMonth={month}>
@@ -41,9 +104,21 @@ const generatedDate = new Date(schedule.generated).toLocaleDateString('en-US', {
         </div>
         <div class="header-actions">
           <button onclick="window.print()" class="btn btn-secondary">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
               <polyline points="6 9 6 2 18 2 18 9"></polyline>
-              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <path
+                d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
+              ></path>
               <rect x="6" y="14" width="12" height="8"></rect>
             </svg>
             Print
@@ -52,11 +127,23 @@ const generatedDate = new Date(schedule.generated).toLocaleDateString('en-US', {
       </div>
     </header>
 
+    <!-- Static AV Schedule table -->
     <ScheduleTable weeks={schedule.weeks} />
 
     <footer class="schedule-footer">
       <p>Generated: {generatedDate}</p>
     </footer>
+
+    <!-- Interactive Meeting Assignments (screen only) -->
+    <div class="screen-only">
+      <MeetingAssignments
+        client:load
+        weeks={meetingWeeks}
+        brothers={brotherData}
+        month={month!}
+        isDev={isDev}
+      />
+    </div>
   </div>
 </Layout>
 
@@ -86,12 +173,24 @@ const generatedDate = new Date(schedule.generated).toLocaleDateString('en-US', {
     }
 
     .page-header {
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .page-title {
+      font-size: 18pt;
+    }
+
+    .page-subtitle {
+      font-size: 11pt;
     }
 
     .schedule-footer {
-      margin-top: 1rem;
-      font-size: 10pt;
+      margin-top: 0.75rem;
+      font-size: 9pt;
+    }
+
+    .screen-only {
+      display: none !important;
     }
   }
 

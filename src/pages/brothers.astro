@@ -1,0 +1,608 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { brothers } from '../config/brothers';
+import { meetingPartConstraints } from '../config/constraints';
+import type {
+  RestrictionType,
+  Privilege,
+  MeetingPartType,
+  PartConstraint,
+} from '../types';
+
+const privilegeLabels: Record<Privilege, string> = {
+  elder: 'Elder',
+  ministerial_servant: 'MS',
+  publisher: 'Publisher',
+  unbaptized: 'Unbaptized',
+};
+
+const restrictionLabels: Record<RestrictionType, string> = {
+  no_audio: 'No Audio',
+  no_video: 'No Video',
+  no_av_assistant: 'No AV Asst',
+  no_mic: 'No Mic',
+  no_frontStage: 'No Front/Stage',
+  no_entrance: 'No Entrance',
+  no_auditorium: 'No Auditorium',
+  mic_once_monthly: 'Mic 1x/month',
+};
+
+// Single sorted list by last name
+const sortedBrothers = brothers
+  .filter((b) => b.active)
+  .sort((a, b) => a.lastName.localeCompare(b.lastName));
+
+const partLabels: Record<MeetingPartType, string> = {
+  midweek_chairman: 'Chairman',
+  opening_prayer: 'Opening Prayer',
+  treasures_talk: 'Treasures Talk',
+  spiritual_gems: 'Spiritual Gems',
+  bible_reading: 'Bible Reading',
+  student_talk: 'Student Talk',
+  living_as_christians: 'Living as Christians',
+  cbs_chairman: 'CBS Conductor',
+  cbs_reader: 'CBS Reader',
+  closing_prayer: 'Closing Prayer',
+  weekend_chairman: 'Chairman',
+  public_talk: 'Public Talk',
+  wt_conductor: 'WT Conductor',
+  wt_reader: 'WT Reader',
+};
+
+const constraintLabels: Record<PartConstraint, string> = {
+  no_av: 'No AV assignment',
+  no_mic: 'No Mic assignment',
+  none: 'No restriction',
+};
+
+const midweekParts: MeetingPartType[] = [
+  'midweek_chairman',
+  'opening_prayer',
+  'treasures_talk',
+  'spiritual_gems',
+  'bible_reading',
+  'student_talk',
+  'living_as_christians',
+  'cbs_chairman',
+  'cbs_reader',
+  'closing_prayer',
+];
+
+const weekendParts: MeetingPartType[] = [
+  'weekend_chairman',
+  'public_talk',
+  'wt_conductor',
+  'wt_reader',
+];
+---
+
+<Layout title="Brothers" currentPage="brothers">
+  <div class="container">
+    <header class="page-header">
+      <div>
+        <h1 class="page-title">Brothers & Restrictions</h1>
+        <p class="page-subtitle">
+          AV assignment eligibility and scheduling parameters
+        </p>
+      </div>
+    </header>
+
+    <div class="brothers-table-wrapper">
+      <table class="brothers-table">
+        <thead>
+          <tr>
+            <th class="sortable" data-col="0" data-sort="asc"
+              >Name <span class="sort-icon">▲</span></th
+            >
+            <th class="sortable" data-col="1"
+              >Privilege <span class="sort-icon"></span></th
+            >
+            <th class="sortable" data-col="2"
+              >Restrictions <span class="sort-icon"></span></th
+            >
+            <th class="sortable" data-col="3"
+              >Special Role <span class="sort-icon"></span></th
+            >
+          </tr>
+        </thead>
+        <tbody>
+          {
+            sortedBrothers.map((brother, idx) => (
+              <tr class:list={[{ 'alt-row': idx % 2 === 1 }]}>
+                <td class="name-cell">{brother.fullName}</td>
+                <td>
+                  <span
+                    class:list={[
+                      'privilege-badge',
+                      `privilege-${brother.privilege}`,
+                    ]}
+                  >
+                    {privilegeLabels[brother.privilege]}
+                  </span>
+                </td>
+                <td class="restrictions-cell">
+                  {brother.restrictions.length > 0 ? (
+                    <div class="restriction-tags">
+                      {brother.restrictions.map((r) => (
+                        <span class="restriction-tag">
+                          {restrictionLabels[r]}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <span class="no-restrictions">None</span>
+                  )}
+                </td>
+                <td>
+                  {brother.isWTConductor === 'primary' && (
+                    <span class="role-badge">WT Conductor</span>
+                  )}
+                  {brother.isWTConductor === 'backup' && (
+                    <span class="role-badge role-backup">WT Backup</span>
+                  )}
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="constraints-section">
+      <h2 class="section-title">Meeting Part Constraints</h2>
+      <p class="section-subtitle">
+        When a brother has a meeting part, these constraints determine which AV
+        positions they cannot hold that week.
+      </p>
+
+      <div class="constraints-grid">
+        <div class="constraint-card">
+          <h3 class="constraint-card-title">Midweek Meeting</h3>
+          <table class="constraint-table">
+            <thead>
+              <tr>
+                <th>Meeting Part</th>
+                <th>Constraint</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                midweekParts.map((part, idx) => {
+                  const constraint = meetingPartConstraints[part];
+                  return (
+                    <tr class:list={[{ 'alt-row': idx % 2 === 1 }]}>
+                      <td class="part-name">{partLabels[part]}</td>
+                      <td>
+                        <span
+                          class:list={[
+                            'constraint-badge',
+                            `constraint-${constraint}`,
+                          ]}
+                        >
+                          {constraintLabels[constraint]}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="constraint-card">
+          <h3 class="constraint-card-title">Weekend Meeting</h3>
+          <table class="constraint-table">
+            <thead>
+              <tr>
+                <th>Meeting Part</th>
+                <th>Constraint</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                weekendParts.map((part, idx) => {
+                  const constraint = meetingPartConstraints[part];
+                  return (
+                    <tr class:list={[{ 'alt-row': idx % 2 === 1 }]}>
+                      <td class="part-name">{partLabels[part]}</td>
+                      <td>
+                        <span
+                          class:list={[
+                            'constraint-badge',
+                            `constraint-${constraint}`,
+                          ]}
+                        >
+                          {constraintLabels[constraint]}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="config-note">
+      <p>
+        To update brothers or constraints, edit <code
+          >src/config/brothers.ts</code
+        > and <code>src/config/constraints.ts</code>, then re-generate
+        schedules.
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .brothers-table-wrapper {
+    overflow-x: auto;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+  }
+
+  .brothers-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  .brothers-table th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    background: var(--table-header-bg);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .brothers-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.15s ease;
+  }
+
+  .brothers-table th.sortable:hover {
+    color: var(--primary-color);
+  }
+
+  .sort-icon {
+    font-size: 0.625rem;
+    opacity: 0.4;
+    margin-left: 0.25rem;
+  }
+
+  .brothers-table th[data-sort] .sort-icon {
+    opacity: 1;
+    color: var(--primary-color);
+  }
+
+  .brothers-table td {
+    padding: 0.625rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .brothers-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .alt-row {
+    background: var(--table-header-bg);
+  }
+
+  .brothers-table tbody tr:hover {
+    background: var(--table-row-hover);
+  }
+
+  .name-cell {
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  .privilege-badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .privilege-elder {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+
+  .privilege-ministerial_servant {
+    background: #d1fae5;
+    color: #059669;
+  }
+
+  .privilege-publisher,
+  .privilege-unbaptized {
+    background: #f3f4f6;
+    color: #6b7280;
+  }
+
+  :global(.dark) .privilege-elder {
+    background: #1e3a5f;
+    color: #93c5fd;
+  }
+
+  :global(.dark) .privilege-ministerial_servant {
+    background: #064e3b;
+    color: #6ee7b7;
+  }
+
+  :global(.dark) .privilege-publisher,
+  :global(.dark) .privilege-unbaptized {
+    background: #374151;
+    color: #9ca3af;
+  }
+
+  .restrictions-cell {
+    max-width: 300px;
+  }
+
+  .restriction-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .restriction-tag {
+    display: inline-block;
+    padding: 0.125rem 0.375rem;
+    background: #fef2f2;
+    color: #dc2626;
+    border-radius: 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  :global(.dark) .restriction-tag {
+    background: #451a1a;
+    color: #f87171;
+  }
+
+  .no-restrictions {
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    font-style: italic;
+  }
+
+  .role-badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: #fef3c7;
+    color: #b45309;
+    border-radius: 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .role-backup {
+    background: #f3f4f6;
+    color: #6b7280;
+  }
+
+  :global(.dark) .role-badge {
+    background: #451a00;
+    color: #fbbf24;
+  }
+
+  :global(.dark) .role-backup {
+    background: #374151;
+    color: #9ca3af;
+  }
+
+  .constraints-section {
+    margin-top: 2.5rem;
+  }
+
+  .section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  .constraints-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .constraint-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .constraint-card-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    background: var(--table-header-bg);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .constraint-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+  }
+
+  .constraint-table th {
+    text-align: left;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    font-size: 0.6875rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .constraint-table td {
+    padding: 0.4rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .constraint-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .constraint-table tbody tr:hover {
+    background: var(--table-row-hover);
+  }
+
+  .part-name {
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .constraint-badge {
+    display: inline-block;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+  }
+
+  .constraint-no_av {
+    background: #fef2f2;
+    color: #dc2626;
+  }
+
+  .constraint-no_mic {
+    background: #fffbeb;
+    color: #d97706;
+  }
+
+  .constraint-none {
+    background: #f0fdf4;
+    color: #16a34a;
+  }
+
+  :global(.dark) .constraint-no_av {
+    background: #451a1a;
+    color: #f87171;
+  }
+
+  :global(.dark) .constraint-no_mic {
+    background: #451a00;
+    color: #fbbf24;
+  }
+
+  :global(.dark) .constraint-none {
+    background: #052e16;
+    color: #4ade80;
+  }
+
+  .config-note {
+    margin-top: 1.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--table-header-bg);
+    border-radius: 0.375rem;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+  }
+
+  .config-note code {
+    background: var(--card-bg);
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.8125rem;
+  }
+
+  @media (max-width: 768px) {
+    .constraints-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .brothers-table {
+      font-size: 0.8125rem;
+    }
+
+    .brothers-table th,
+    .brothers-table td {
+      padding: 0.5rem 0.625rem;
+    }
+  }
+</style>
+
+<script>
+  function initSortable() {
+    const table = document.querySelector('.brothers-table');
+    if (!table) return;
+
+    const headers = table.querySelectorAll('th.sortable');
+    const tbody = table.querySelector('tbody');
+    if (!tbody) return;
+
+    headers.forEach((header) => {
+      header.addEventListener('click', () => {
+        const col = parseInt(header.getAttribute('data-col') || '0');
+        const currentSort = header.getAttribute('data-sort');
+        const newSort = currentSort === 'asc' ? 'desc' : 'asc';
+
+        // Reset all headers
+        headers.forEach((h) => {
+          h.removeAttribute('data-sort');
+          const icon = h.querySelector('.sort-icon');
+          if (icon) icon.textContent = '';
+        });
+
+        // Set active header
+        header.setAttribute('data-sort', newSort);
+        const icon = header.querySelector('.sort-icon');
+        if (icon) icon.textContent = newSort === 'asc' ? '▲' : '▼';
+
+        // Sort rows
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        rows.sort((a, b) => {
+          const aCell = a.cells[col];
+          const bCell = b.cells[col];
+          const aText = (aCell?.textContent || '').trim();
+          const bText = (bCell?.textContent || '').trim();
+
+          // Empty values go last
+          if (!aText && bText) return 1;
+          if (aText && !bText) return -1;
+
+          const cmp = aText.localeCompare(bText);
+          return newSort === 'asc' ? cmp : -cmp;
+        });
+
+        // Re-append sorted rows and restripe
+        rows.forEach((row, idx) => {
+          row.classList.toggle('alt-row', idx % 2 === 1);
+          tbody.appendChild(row);
+        });
+      });
+    });
+  }
+
+  initSortable();
+  document.addEventListener('astro:after-swap', initSortable);
+</script>

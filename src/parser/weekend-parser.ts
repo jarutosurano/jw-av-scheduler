@@ -192,7 +192,11 @@ function parseSingleWeekendMeeting(
     }
 
     // Chairman (standalone line)
-    if (line.includes('Chairman') && !line.includes('Opening') && !meeting.chairman) {
+    if (
+      line.includes('Chairman') &&
+      !line.includes('Opening') &&
+      !meeting.chairman
+    ) {
       meeting.chairman = extractNameAfterLabel(line, 'Chairman');
       continue;
     }
@@ -230,7 +234,9 @@ function parseSingleWeekendMeeting(
 /**
  * Convert weekend meeting data to MeetingPart array
  */
-export function weekendDataToMeetingParts(data: WeekendMeetingData): MeetingPart[] {
+export function weekendDataToMeetingParts(
+  data: WeekendMeetingData
+): MeetingPart[] {
   const parts: MeetingPart[] = [];
 
   const addPart = (
@@ -247,12 +253,7 @@ export function weekendDataToMeetingParts(data: WeekendMeetingData): MeetingPart
     });
   };
 
-  // Opening Prayer
-  if (data.openingPrayer) {
-    addPart('opening_prayer', 'Opening Prayer', data.openingPrayer);
-  }
-
-  // Chairman
+  // Chairman (also handles Opening Prayer for weekend meetings)
   if (data.chairman) {
     addPart('weekend_chairman', 'Chairman', data.chairman);
   }

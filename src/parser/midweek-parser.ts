@@ -16,8 +16,8 @@ export interface MidweekMeetingData {
   treasuresTalk: string | null;
   spiritualGems: string | null;
   bibleReading: string | null;
-  studentTalks: string[];
-  livingAsChristians: string[];
+  studentTalks: { name: string; title: string }[];
+  livingAsChristians: { name: string; title: string }[];
   cbsChairman: string | null;
   cbsReader: string | null;
   closingPrayer: string | null;
@@ -62,16 +62,82 @@ function extractNameFromPartLine(line: string): string | null {
 }
 
 /**
+ * Extract both title and name from a part line
+ * Input: "1. Lokal na Pangangailangan (15 min.)Santiso, Jonas"
+ * Output: { title: "15-min Local Needs", name: "Santiso, Jonas" }
+ */
+function extractTitleAndNameFromPartLine(
+  line: string
+): { title: string; name: string } | null {
+  const match = line.match(/^\d+\.\s*(.+?)\s*\((\d+)\s*min\.?\)\s*(.+)$/i);
+  if (match) {
+    const minutes = match[2];
+    const shortened = shortenPartTitle(match[1].trim());
+    return { title: `${minutes}-min ${shortened}`, name: match[3].trim() };
+  }
+  return null;
+}
+
+/**
+ * Translate long Tagalog part titles to shorter English equivalents
+ */
+function shortenPartTitle(title: string): string {
+  const translations: [RegExp, string][] = [
+    [/Lokal na Pangangailangan/i, 'Local Needs'],
+    [/Pagpapasimula ng Pakikipag-usap/i, 'Starting a Conversation'],
+    [/Pagbabalik-Dalaw/i, 'Return Visit'],
+    [/Paggawa ng mga Alagad/i, 'Making Disciples'],
+    [/Pahayag/i, 'Talk'],
+    [/Ipaliwanag ang Paniniwala Mo/i, 'Explain Your Beliefs'],
+    [/Pakikipag-usap/i, 'Conversation'],
+    [/Maging Mahusay/i, 'Apply Yourself'],
+    [/Pamumuhay bilang mga Kristiyano/i, 'Living as Christians'],
+    [/Tunay na Pananampalataya/i, 'True Faith'],
+    [/Video Clip/i, 'Video'],
+  ];
+
+  for (const [pattern, english] of translations) {
+    if (pattern.test(title)) {
+      return english;
+    }
+  }
+
+  return title;
+}
+
+/**
  * Check if a name belongs to a known brother (male names)
  * This helps filter out sister parts from student talks
  */
 function isMaleName(name: string): boolean {
   // List of known male first names from our brothers config
   const maleFirstNames = [
-    'jonas', 'dandel', 'raffy', 'rafael', 'randy', 'randino', 'matt', 'matthew',
-    'melky', 'melquisidecks', 'gally', 'sir galahad', 'abraham', 'herman',
-    'edgar', 'edgardo', 'jayr', 'edmer', 'jared', 'ralph', 'zach', 'cezar',
-    'john', 'xian', 'genesis', 'mike',
+    'jonas',
+    'dandel',
+    'raffy',
+    'rafael',
+    'randy',
+    'randino',
+    'matt',
+    'matthew',
+    'melky',
+    'melquisidecks',
+    'gally',
+    'sir galahad',
+    'abraham',
+    'herman',
+    'edgar',
+    'edgardo',
+    'jayr',
+    'edmer',
+    'jared',
+    'ralph',
+    'zach',
+    'cezar',
+    'john',
+    'xian',
+    'genesis',
+    'mike',
   ];
 
   const firstName = name.split(',')[0].toLowerCase().trim();
@@ -118,7 +184,10 @@ function parseSingleMidweekMeeting(
   dateStr: string,
   content: string
 ): MidweekMeetingData {
-  const lines = content.split('\n').map((l) => l.trim()).filter(Boolean);
+  const lines = content
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean);
 
   const meeting: MidweekMeetingData = {
     date: parseDateString(dateStr),
@@ -181,25 +250,41 @@ function parseSingleMidweekMeeting(
         meeting.treasuresTalk = extractNameFromPartLine(line);
       }
       // Spiritual Gems
-      if (line.includes('Espirituwal na Hiyas') || line.includes('Spiritual Gems')) {
+      if (
+        line.includes('Espirituwal na Hiyas') ||
+        line.includes('Spiritual Gems')
+      ) {
         meeting.spiritualGems = extractNameFromPartLine(line);
       }
       // Bible Reading
-      if (line.includes('Pagbabasa ng Bibliya') || line.includes('Bible Reading')) {
+      if (
+        line.includes('Pagbabasa ng Bibliya') ||
+        line.includes('Bible Reading')
+      ) {
         meeting.bibleReading = extractNameFromPartLine(line);
       }
     }
 
     // Apply Yourself section (student talks)
     if (inApplyYourself) {
-      const name = extractNameFromPartLine(line);
-      if (name) {
+      const titleAndName = extractTitleAndNameFromPartLine(line);
+      if (titleAndName) {
         // May have multiple names separated by "/"
-        const names = name.split('/').map((n) => n.trim());
+        const names = titleAndName.name.split('/').map((n) => n.trim());
         for (const n of names) {
           // Only track male names (we don't assign sisters to AV)
           if (isMaleName(n)) {
-            meeting.studentTalks.push(n);
+            meeting.studentTalks.push({ name: n, title: titleAndName.title });
+          }
+        }
+      } else {
+        const name = extractNameFromPartLine(line);
+        if (name) {
+          const names = name.split('/').map((n) => n.trim());
+          for (const n of names) {
+            if (isMaleName(n)) {
+              meeting.studentTalks.push({ name: n, title: 'Student Talk' });
+            }
           }
         }
       }
@@ -221,9 +306,18 @@ function parseSingleMidweekMeeting(
       }
       // Other Living as Christians parts
       else {
-        const name = extractNameFromPartLine(line);
-        if (name && isMaleName(name)) {
-          meeting.livingAsChristians.push(name);
+        const titleAndName = extractTitleAndNameFromPartLine(line);
+        if (titleAndName && isMaleName(titleAndName.name)) {
+          meeting.livingAsChristians.push(titleAndName);
+        } else {
+          // Fallback: try extracting just the name
+          const name = extractNameFromPartLine(line);
+          if (name && isMaleName(name)) {
+            meeting.livingAsChristians.push({
+              name,
+              title: 'Living as Christians',
+            });
+          }
         }
       }
     }
@@ -240,7 +334,9 @@ function parseSingleMidweekMeeting(
 /**
  * Convert midweek meeting data to MeetingPart array
  */
-export function midweekDataToMeetingParts(data: MidweekMeetingData): MeetingPart[] {
+export function midweekDataToMeetingParts(
+  data: MidweekMeetingData
+): MeetingPart[] {
   const parts: MeetingPart[] = [];
 
   const addPart = (
@@ -269,32 +365,32 @@ export function midweekDataToMeetingParts(data: MidweekMeetingData): MeetingPart
 
   // Treasures Talk
   if (data.treasuresTalk) {
-    addPart('treasures_talk', 'Treasures Talk (10 min)', data.treasuresTalk);
+    addPart('treasures_talk', '10-min Treasures Talk', data.treasuresTalk);
   }
 
   // Spiritual Gems
   if (data.spiritualGems) {
-    addPart('spiritual_gems', 'Espirituwal na Hiyas (10 min)', data.spiritualGems);
+    addPart('spiritual_gems', 'Spiritual Gems', data.spiritualGems);
   }
 
   // Bible Reading
   if (data.bibleReading) {
-    addPart('bible_reading', 'Pagbabasa ng Bibliya', data.bibleReading);
+    addPart('bible_reading', 'Bible Reading', data.bibleReading);
   }
 
   // Student talks
-  for (const student of data.studentTalks) {
-    addPart('student_talk', 'Student Talk', student);
+  for (const part of data.studentTalks) {
+    addPart('student_talk', part.title, part.name);
   }
 
   // Living as Christians parts
-  for (const brother of data.livingAsChristians) {
-    addPart('living_as_christians', 'Living as Christians', brother);
+  for (const part of data.livingAsChristians) {
+    addPart('living_as_christians', part.title, part.name);
   }
 
   // CBS Chairman
   if (data.cbsChairman) {
-    addPart('cbs_chairman', 'CBS Chairman', data.cbsChairman);
+    addPart('cbs_chairman', 'CBS Conductor', data.cbsChairman);
   }
 
   // CBS Reader
