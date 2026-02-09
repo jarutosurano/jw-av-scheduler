@@ -26,6 +26,7 @@ export interface MeetingWeek {
   noMeeting?: boolean;
   weekendOnly?: boolean;
   note?: string;
+  locked?: boolean;
 }
 
 interface Props {
@@ -40,7 +41,7 @@ type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 /** Part type display labels */
 const partLabels: Record<MeetingPartType, string> = {
   midweek_chairman: 'Chairman',
-  opening_prayer: 'Prayer',
+  opening_prayer: 'Opening Prayer',
   treasures_talk: 'Treasures Talk',
   spiritual_gems: 'Spiritual Gems',
   bible_reading: 'Bible Reading',
@@ -48,9 +49,9 @@ const partLabels: Record<MeetingPartType, string> = {
   living_as_christians: 'Living as Christians',
   cbs_chairman: 'CBS Conductor',
   cbs_reader: 'CBS Reader',
-  closing_prayer: 'Prayer',
+  closing_prayer: 'Closing Prayer',
   weekend_chairman: 'Chairman',
-  public_talk: 'Public Talk',
+  public_talk: 'PT Speaker',
   wt_conductor: 'WT Conductor',
   wt_reader: 'WT Reader',
 };
@@ -115,7 +116,13 @@ function getBrotherParts(
 ): string[] {
   return parts
     .filter((p) => p.brotherId === brotherId)
-    .map((p) => partLabels[p.partType]);
+    .map((p) =>
+      (p.partType === 'student_talk' ||
+        p.partType === 'living_as_christians') &&
+      p.partTitle
+        ? p.partTitle
+        : partLabels[p.partType]
+    );
 }
 
 /** Row in the meeting assignments table */
@@ -198,6 +205,15 @@ export default function MeetingAssignments({
     const init: Record<string, Record<AVPosition, string | null>> = {};
     for (const week of weeks) {
       init[week.weekOf] = { ...week.assignments };
+    }
+    return init;
+  });
+
+  // State: locked status per week
+  const [weekLocked, setWeekLocked] = useState<Record<string, boolean>>(() => {
+    const init: Record<string, boolean> = {};
+    for (const week of weeks) {
+      init[week.weekOf] = week.locked ?? false;
     }
     return init;
   });
@@ -305,6 +321,42 @@ export default function MeetingAssignments({
     [scheduleAutoSave]
   );
 
+  // Toggle lock state for a week
+  const toggleLock = useCallback(
+    async (weekOf: string) => {
+      if (!isDev) return;
+
+      const newLocked = !weekLocked[weekOf];
+      setWeekLocked((prev) => ({ ...prev, [weekOf]: newLocked }));
+
+      try {
+        const res = await fetch(`/api/schedule/${month}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ weekOf, locked: newLocked }),
+        });
+        if (!res.ok) throw new Error(await res.text());
+
+        setSaveStatuses((prev) => ({ ...prev, [weekOf]: 'saved' }));
+        setTimeout(() => {
+          setSaveStatuses((prev) =>
+            prev[weekOf] === 'saved' ? { ...prev, [weekOf]: 'idle' } : prev
+          );
+        }, 1500);
+      } catch {
+        // Revert on failure
+        setWeekLocked((prev) => ({ ...prev, [weekOf]: !newLocked }));
+        setSaveStatuses((prev) => ({ ...prev, [weekOf]: 'error' }));
+        setTimeout(() => {
+          setSaveStatuses((prev) =>
+            prev[weekOf] === 'error' ? { ...prev, [weekOf]: 'idle' } : prev
+          );
+        }, 3000);
+      }
+    },
+    [isDev, month, weekLocked]
+  );
+
   return (
     <div style={{ marginTop: '2rem' }}>
       <h3 style={s.sectionTitle}>Meeting Assignments</h3>
@@ -315,6 +367,7 @@ export default function MeetingAssignments({
           const assignments = weekAssignments[week.weekOf] || week.assignments;
           const rows = buildSortedRows(week, brothers);
           const status = saveStatuses[week.weekOf] || 'idle';
+          const isLocked = weekLocked[week.weekOf] ?? false;
 
           return (
             <div key={week.weekOf} style={s.weekCard}>
@@ -326,6 +379,19 @@ export default function MeetingAssignments({
                   {week.weekendOnly ? '(Sun only)' : '(Fri & Sun)'}
                 </span>
                 {week.note && <span style={s.noteBadge}>{week.note}</span>}
+                {isLocked && <span style={s.lockedBadge}>Locked</span>}
+                {isDev && (
+                  <button
+                    onClick={() => toggleLock(week.weekOf)}
+                    style={{
+                      ...s.lockButton,
+                      ...(isLocked ? s.lockButtonActive : {}),
+                    }}
+                    title={isLocked ? 'Unlock week' : 'Lock week'}
+                  >
+                    {isLocked ? '\uD83D\uDD12' : '\uD83D\uDD13'}
+                  </button>
+                )}
                 {isDev && status !== 'idle' && (
                   <span
                     style={{
@@ -399,6 +465,7 @@ export default function MeetingAssignments({
                             ) : (
                               <select
                                 value={currentAV || ''}
+                                disabled={isLocked}
                                 onChange={(e) =>
                                   handleChange(
                                     week.weekOf,
@@ -406,7 +473,10 @@ export default function MeetingAssignments({
                                     e.target.value
                                   )
                                 }
-                                style={s.select}
+                                style={{
+                                  ...s.select,
+                                  ...(isLocked ? s.selectDisabled : {}),
+                                }}
                               >
                                 <option value="">-- None --</option>
                                 {eligiblePositions.map((pos) => (
@@ -559,5 +629,35 @@ const s: Record<string, React.CSSProperties> = {
     fontSize: '0.75rem',
     cursor: 'pointer',
     outline: 'none',
+  },
+  selectDisabled: {
+    opacity: 0.5,
+    cursor: 'not-allowed',
+  },
+  lockedBadge: {
+    fontSize: '0.6875rem',
+    fontWeight: 500,
+    padding: '0.125rem 0.375rem',
+    borderRadius: '0.25rem',
+    background: '#fef3c7',
+    color: '#92400e',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.025em',
+  },
+  lockButton: {
+    background: 'none',
+    border: '1px solid var(--border-color)',
+    borderRadius: '0.25rem',
+    cursor: 'pointer',
+    fontSize: '0.875rem',
+    padding: '0.125rem 0.375rem',
+    marginLeft: 'auto',
+    opacity: 0.6,
+    transition: 'opacity 0.2s',
+  },
+  lockButtonActive: {
+    opacity: 1,
+    background: '#fef3c7',
+    borderColor: '#f59e0b',
   },
 };

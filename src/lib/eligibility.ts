@@ -100,16 +100,12 @@ export function getEligiblePositionsForBrother(
   brotherId: string,
   brothers: Brother[],
   unavailability: UnavailabilityInfo,
-  currentAssignments: Record<AVPosition, string | null>
+  _currentAssignments: Record<AVPosition, string | null>
 ): AVPosition[] {
   const brother = brothers.find((b) => b.id === brotherId);
   if (!brother || !brother.active) return [];
 
   return allAVPositions.filter((position) => {
-    // Position must be unassigned or already held by this brother
-    const currentHolder = currentAssignments[position];
-    if (currentHolder && currentHolder !== brotherId) return false;
-
     // Meeting part: no AV at all
     if (unavailability.noAV.includes(brotherId)) return false;
 

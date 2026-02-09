@@ -133,6 +133,8 @@ export interface WeeklySchedule {
   weekendOnly?: boolean;
   /** If true, no meetings at all (Circuit Assembly, Convention) */
   noMeeting?: boolean;
+  /** If true, week is locked and won't be overwritten by regeneration */
+  locked?: boolean;
 }
 
 /**

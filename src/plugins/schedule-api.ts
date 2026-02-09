@@ -47,11 +47,14 @@ export function scheduleApiPlugin(): VitePlugin {
           }
 
           try {
-            const { weekOf, assignments } = JSON.parse(body);
+            const { weekOf, assignments, locked } = JSON.parse(body);
 
-            if (!weekOf || !assignments) {
+            if (
+              !weekOf ||
+              (assignments === undefined && locked === undefined)
+            ) {
               res.statusCode = 400;
-              res.end('Missing weekOf or assignments');
+              res.end('Missing weekOf or assignments/locked');
               return;
             }
 
@@ -75,7 +78,12 @@ export function scheduleApiPlugin(): VitePlugin {
               return;
             }
 
-            schedule.weeks[weekIndex].assignments = assignments;
+            if (assignments !== undefined) {
+              schedule.weeks[weekIndex].assignments = assignments;
+            }
+            if (locked !== undefined) {
+              schedule.weeks[weekIndex].locked = locked;
+            }
 
             // Write back
             fs.writeFileSync(

@@ -103,6 +103,7 @@ export function doesNameMatchBrother(name: string, brother: Brother): boolean {
           matt: ['matthew'],
           melky: ['melquisidecks'],
           gally: ['sir galahad'],
+          john: ['john lawrence'],
           mike: ['mike dandel'],
           dandel: ['mike dandel'],
         };

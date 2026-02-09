@@ -1,6 +1,6 @@
 {
   "month": "2026-02",
-  "generated": "2026-02-09T05:53:06.556Z",
+  "generated": "2026-02-09T18:25:20.333Z",
   "weeks": [
     {
       "weekOf": "2026-02-13",
@@ -9,13 +9,13 @@
       "assignments": {
         "audio": "john-mahor",
         "video": "zach-lucero",
-        "avAssistant": "edmer-sapla",
+        "avAssistant": "ralph-arugay",
         "rightMic": "cezar-macasieb",
         "leftMic": "xian-salazar",
-        "frontStage": "raffy-mondares",
-        "auditorium": "jayr-sullano",
+        "frontStage": "jayr-sullano",
+        "auditorium": "raffy-mondares",
         "entrance1": "jared-nieva",
-        "entrance2": "edgar-silverio"
+        "entrance2": "edmer-sapla"
       },
       "unavailable": {
         "noAV": [
@@ -124,7 +124,8 @@
             "assignedBrother": "Jonas Santiso"
           }
         ]
-      }
+      },
+      "locked": true
     },
     {
       "weekOf": "2026-02-20",
@@ -132,14 +133,14 @@
       "weekendDate": "2026-02-22",
       "assignments": {
         "audio": "ralph-arugay",
-        "video": "john-mahor",
-        "avAssistant": "edmer-sapla",
-        "rightMic": "zach-lucero",
-        "leftMic": "cezar-macasieb",
-        "frontStage": "herman-lucero",
-        "auditorium": "randy-quinol",
-        "entrance1": "jayr-sullano",
-        "entrance2": "jared-nieva"
+        "video": "herman-lucero",
+        "avAssistant": "zach-lucero",
+        "rightMic": "edmer-sapla",
+        "leftMic": "randy-quinol",
+        "frontStage": "cezar-macasieb",
+        "auditorium": "jared-nieva",
+        "entrance1": "john-mahor",
+        "entrance2": "jayr-sullano"
       },
       "unavailable": {
         "noAV": [
@@ -190,6 +191,11 @@
             "assignedBrother": "Silverio, Edgardo"
           },
           {
+            "partType": "student_talk",
+            "partTitle": "5-min Explain Your Beliefs",
+            "assignedBrother": "Mahor, John Lawrence"
+          },
+          {
             "partType": "living_as_christians",
             "partTitle": "15-min “Kanino Ka Ba Umaasa?”",
             "assignedBrother": "Penera, Abraham"
@@ -237,22 +243,23 @@
             "assignedBrother": "Jonas Santiso"
           }
         ]
-      }
+      },
+      "locked": true
     },
     {
       "weekOf": "2026-02-27",
       "midweekDate": "2026-02-27",
       "weekendDate": "2026-03-01",
       "assignments": {
-        "audio": "john-mahor",
-        "video": "jayr-sullano",
-        "avAssistant": "zach-lucero",
-        "rightMic": "dandel-cabusas",
-        "leftMic": "gally-villanueva",
+        "audio": "zach-lucero",
+        "video": "john-mahor",
+        "avAssistant": "jayr-sullano",
+        "rightMic": "gally-villanueva",
+        "leftMic": "dandel-cabusas",
         "frontStage": "randy-quinol",
-        "auditorium": "edmer-sapla",
+        "auditorium": "melky-basanes",
         "entrance1": "cezar-macasieb",
-        "entrance2": "raffy-mondares"
+        "entrance2": "herman-lucero"
       },
       "unavailable": {
         "noAV": [
@@ -355,7 +362,8 @@
             "assignedBrother": "Jonas Santiso"
           }
         ]
-      }
+      },
+      "locked": true
     }
   ]
 }

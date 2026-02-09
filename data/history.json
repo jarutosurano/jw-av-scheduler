@@ -1,141 +1,6 @@
 {
   "assignments": [
     {
-      "brotherId": "john-mahor",
-      "position": "audio",
-      "date": "2026-02-13"
-    },
-    {
-      "brotherId": "zach-lucero",
-      "position": "video",
-      "date": "2026-02-13"
-    },
-    {
-      "brotherId": "edmer-sapla",
-      "position": "avAssistant",
-      "date": "2026-02-13"
-    },
-    {
-      "brotherId": "cezar-macasieb",
-      "position": "rightMic",
-      "date": "2026-02-13"
-    },
-    {
-      "brotherId": "xian-salazar",
-      "position": "leftMic",
-      "date": "2026-02-13"
-    },
-    {
-      "brotherId": "raffy-mondares",
-      "position": "frontStage",
-      "date": "2026-02-13"
-    },
-    {
-      "brotherId": "jayr-sullano",
-      "position": "auditorium",
-      "date": "2026-02-13"
-    },
-    {
-      "brotherId": "jared-nieva",
-      "position": "entrance1",
-      "date": "2026-02-13"
-    },
-    {
-      "brotherId": "edgar-silverio",
-      "position": "entrance2",
-      "date": "2026-02-13"
-    },
-    {
-      "brotherId": "ralph-arugay",
-      "position": "audio",
-      "date": "2026-02-20"
-    },
-    {
-      "brotherId": "john-mahor",
-      "position": "video",
-      "date": "2026-02-20"
-    },
-    {
-      "brotherId": "edmer-sapla",
-      "position": "avAssistant",
-      "date": "2026-02-20"
-    },
-    {
-      "brotherId": "zach-lucero",
-      "position": "rightMic",
-      "date": "2026-02-20"
-    },
-    {
-      "brotherId": "cezar-macasieb",
-      "position": "leftMic",
-      "date": "2026-02-20"
-    },
-    {
-      "brotherId": "herman-lucero",
-      "position": "frontStage",
-      "date": "2026-02-20"
-    },
-    {
-      "brotherId": "randy-quinol",
-      "position": "auditorium",
-      "date": "2026-02-20"
-    },
-    {
-      "brotherId": "jayr-sullano",
-      "position": "entrance1",
-      "date": "2026-02-20"
-    },
-    {
-      "brotherId": "jared-nieva",
-      "position": "entrance2",
-      "date": "2026-02-20"
-    },
-    {
-      "brotherId": "john-mahor",
-      "position": "audio",
-      "date": "2026-02-27"
-    },
-    {
-      "brotherId": "jayr-sullano",
-      "position": "video",
-      "date": "2026-02-27"
-    },
-    {
-      "brotherId": "zach-lucero",
-      "position": "avAssistant",
-      "date": "2026-02-27"
-    },
-    {
-      "brotherId": "dandel-cabusas",
-      "position": "rightMic",
-      "date": "2026-02-27"
-    },
-    {
-      "brotherId": "gally-villanueva",
-      "position": "leftMic",
-      "date": "2026-02-27"
-    },
-    {
-      "brotherId": "randy-quinol",
-      "position": "frontStage",
-      "date": "2026-02-27"
-    },
-    {
-      "brotherId": "edmer-sapla",
-      "position": "auditorium",
-      "date": "2026-02-27"
-    },
-    {
-      "brotherId": "cezar-macasieb",
-      "position": "entrance1",
-      "date": "2026-02-27"
-    },
-    {
-      "brotherId": "raffy-mondares",
-      "position": "entrance2",
-      "date": "2026-02-27"
-    },
-    {
       "brotherId": "jayr-sullano",
       "position": "audio",
       "date": "2026-03-06"
@@ -494,7 +359,187 @@
       "brotherId": "matt-mancuso",
       "position": "entrance2",
       "date": "2026-04-24"
+    },
+    {
+      "brotherId": "john-mahor",
+      "position": "audio",
+      "date": "2026-02-06"
+    },
+    {
+      "brotherId": "zach-lucero",
+      "position": "video",
+      "date": "2026-02-06"
+    },
+    {
+      "brotherId": "jared-nieva",
+      "position": "avAssistant",
+      "date": "2026-02-06"
+    },
+    {
+      "brotherId": "ralph-arugay",
+      "position": "rightMic",
+      "date": "2026-02-06"
+    },
+    {
+      "brotherId": "dandel-cabusas",
+      "position": "leftMic",
+      "date": "2026-02-06"
+    },
+    {
+      "brotherId": "herman-lucero",
+      "position": "frontStage",
+      "date": "2026-02-06"
+    },
+    {
+      "brotherId": "edgar-silverio",
+      "position": "auditorium",
+      "date": "2026-02-06"
+    },
+    {
+      "brotherId": "edmer-sapla",
+      "position": "entrance1",
+      "date": "2026-02-06"
+    },
+    {
+      "brotherId": "cezar-macasieb",
+      "position": "entrance2",
+      "date": "2026-02-06"
+    },
+    {
+      "brotherId": "john-mahor",
+      "position": "audio",
+      "date": "2026-02-13"
+    },
+    {
+      "brotherId": "zach-lucero",
+      "position": "video",
+      "date": "2026-02-13"
+    },
+    {
+      "brotherId": "edmer-sapla",
+      "position": "avAssistant",
+      "date": "2026-02-13"
+    },
+    {
+      "brotherId": "xian-salazar",
+      "position": "rightMic",
+      "date": "2026-02-13"
+    },
+    {
+      "brotherId": "cezar-macasieb",
+      "position": "leftMic",
+      "date": "2026-02-13"
+    },
+    {
+      "brotherId": "raffy-mondares",
+      "position": "frontStage",
+      "date": "2026-02-13"
+    },
+    {
+      "brotherId": "jayr-sullano",
+      "position": "auditorium",
+      "date": "2026-02-13"
+    },
+    {
+      "brotherId": "jared-nieva",
+      "position": "entrance1",
+      "date": "2026-02-13"
+    },
+    {
+      "brotherId": "melky-basanes",
+      "position": "entrance2",
+      "date": "2026-02-13"
+    },
+    {
+      "brotherId": "ralph-arugay",
+      "position": "audio",
+      "date": "2026-02-20"
+    },
+    {
+      "brotherId": "herman-lucero",
+      "position": "video",
+      "date": "2026-02-20"
+    },
+    {
+      "brotherId": "zach-lucero",
+      "position": "avAssistant",
+      "date": "2026-02-20"
+    },
+    {
+      "brotherId": "edmer-sapla",
+      "position": "rightMic",
+      "date": "2026-02-20"
+    },
+    {
+      "brotherId": "randy-quinol",
+      "position": "leftMic",
+      "date": "2026-02-20"
+    },
+    {
+      "brotherId": "cezar-macasieb",
+      "position": "frontStage",
+      "date": "2026-02-20"
+    },
+    {
+      "brotherId": "jared-nieva",
+      "position": "auditorium",
+      "date": "2026-02-20"
+    },
+    {
+      "brotherId": "john-mahor",
+      "position": "entrance1",
+      "date": "2026-02-20"
+    },
+    {
+      "brotherId": "jayr-sullano",
+      "position": "entrance2",
+      "date": "2026-02-20"
+    },
+    {
+      "brotherId": "zach-lucero",
+      "position": "audio",
+      "date": "2026-02-27"
+    },
+    {
+      "brotherId": "john-mahor",
+      "position": "video",
+      "date": "2026-02-27"
+    },
+    {
+      "brotherId": "jayr-sullano",
+      "position": "avAssistant",
+      "date": "2026-02-27"
+    },
+    {
+      "brotherId": "gally-villanueva",
+      "position": "rightMic",
+      "date": "2026-02-27"
+    },
+    {
+      "brotherId": "dandel-cabusas",
+      "position": "leftMic",
+      "date": "2026-02-27"
+    },
+    {
+      "brotherId": "randy-quinol",
+      "position": "frontStage",
+      "date": "2026-02-27"
+    },
+    {
+      "brotherId": "edmer-sapla",
+      "position": "auditorium",
+      "date": "2026-02-27"
+    },
+    {
+      "brotherId": "raffy-mondares",
+      "position": "entrance1",
+      "date": "2026-02-27"
+    },
+    {
+      "brotherId": "matt-mancuso",
+      "position": "entrance2",
+      "date": "2026-02-27"
     }
   ],
-  "lastUpdated": "2026-02-09T05:53:15.189Z"
+  "lastUpdated": "2026-02-09T18:25:20.334Z"
 }

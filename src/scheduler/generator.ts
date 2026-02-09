@@ -81,6 +81,23 @@ export async function generateMonthlySchedule(
 ): Promise<GeneratorResult> {
   console.log(`\nGenerating schedule for ${month}...`);
 
+  // Load existing schedule to preserve locked weeks
+  const existingSchedule = loadScheduleFromFile(month, options.outputDir);
+  const lockedWeeks = new Map<string, WeeklySchedule>();
+  if (existingSchedule) {
+    for (const week of existingSchedule.weeks) {
+      if (week.locked) {
+        lockedWeeks.set(week.weekOf, week);
+      }
+    }
+    if (lockedWeeks.size > 0) {
+      console.log(`Found ${lockedWeeks.size} locked week(s) — will preserve:`);
+      for (const weekOf of lockedWeeks.keys()) {
+        console.log(`  ${weekOf} (locked)`);
+      }
+    }
+  }
+
   // Parse PDFs
   console.log('Parsing PDFs...');
   const weeks = await parseHourglassPDFs(midweekPdfPath, weekendPdfPath);
@@ -179,7 +196,13 @@ export async function generateMonthlySchedule(
     monthWeeks.sort((a, b) => a.weekOf.localeCompare(b.weekOf));
   }
 
-  let weeksToSchedule = monthWeeks;
+  // Remove locked weeks from scheduling — they'll be preserved as-is
+  let weeksToSchedule = monthWeeks.filter((w) => !lockedWeeks.has(w.weekOf));
+  if (weeksToSchedule.length < monthWeeks.length) {
+    console.log(
+      `Scheduling ${weeksToSchedule.length} of ${monthWeeks.length} weeks (${lockedWeeks.size} locked)`
+    );
+  }
 
   // Load history
   let history = loadHistory();
@@ -196,8 +219,11 @@ export async function generateMonthlySchedule(
     options.schedulingOptions
   );
 
-  // Collect all schedules (including skipped weeks if we have them)
-  const allSchedules: WeeklySchedule[] = results.map((r) => r.schedule);
+  // Collect all schedules and merge locked weeks back in
+  const allSchedules: WeeklySchedule[] = [
+    ...lockedWeeks.values(),
+    ...results.map((r) => r.schedule),
+  ].sort((a, b) => a.weekOf.localeCompare(b.weekOf));
 
   // Apply week notes (Memorial, Circuit Assembly, etc.)
   if (options.weekNotes) {

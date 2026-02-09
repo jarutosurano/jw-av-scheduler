@@ -78,6 +78,7 @@ const meetingWeeks: MeetingWeek[] = schedule.weeks.map((week) => ({
   noMeeting: week.noMeeting,
   weekendOnly: week.weekendOnly,
   note: week.note,
+  locked: week.locked,
 }));
 
 // Serialize brothers as plain objects for React

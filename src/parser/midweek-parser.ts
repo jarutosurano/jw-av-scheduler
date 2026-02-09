@@ -140,12 +140,18 @@ function isMaleName(name: string): boolean {
     'mike',
   ];
 
-  const firstName = name.split(',')[0].toLowerCase().trim();
-  const reversedFirstName = name.split(' ').pop()?.toLowerCase().trim() || '';
+  const lowerName = name.toLowerCase().trim();
 
-  return (
-    maleFirstNames.some((n) => firstName.includes(n)) ||
-    maleFirstNames.some((n) => reversedFirstName.includes(n))
+  // Handle "LastName, FirstName MiddleName" format
+  let firstNamePart: string;
+  if (lowerName.includes(',')) {
+    firstNamePart = lowerName.split(',')[1]?.trim() || '';
+  } else {
+    firstNamePart = lowerName;
+  }
+
+  return maleFirstNames.some(
+    (n) => firstNamePart.includes(n) || lowerName.includes(n)
   );
 }
 
