@@ -58,7 +58,7 @@ describe('Availability', () => {
     expect(jayrAvailable).toBe(false);
   });
 
-  it('should allow Xian only for mic positions', () => {
+  it('should not allow inactive Xian for any position', () => {
     const audioResult = getAvailableBrothersForPosition('audio', mockWeek);
     const micResult = getAvailableBrothersForPosition('rightMic', mockWeek);
 
@@ -68,11 +68,11 @@ describe('Availability', () => {
     );
     expect(xianAudio).toBe(false);
 
-    // Xian SHOULD be available for mic (if not limited by meeting part)
+    // Xian should NOT be available for mic (inactive + no_mic restriction)
     const xianMic = micResult.availableBrothers.some(
       (b) => b.id === 'xian-salazar'
     );
-    expect(xianMic).toBe(true);
+    expect(xianMic).toBe(false);
   });
 
   it('should restrict auditorium to elders and MS only', () => {

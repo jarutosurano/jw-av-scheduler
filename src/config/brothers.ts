@@ -143,8 +143,8 @@ export const brothers: Brother[] = [
     lastName: 'Lucero',
     fullName: 'Zach Lucero',
     privilege: 'publisher',
-    restrictions: ['no_entrance'],
-    active: true,
+    restrictions: ['no_entrance', 'no_frontStage', 'no_auditorium'],
+    active: false,
   },
   {
     id: 'cezar-macasieb',
@@ -174,12 +174,12 @@ export const brothers: Brother[] = [
       'no_audio',
       'no_video',
       'no_av_assistant',
+      'no_mic',
       'no_frontStage',
       'no_auditorium',
       'no_entrance',
-      'mic_once_monthly',
     ],
-    active: true,
+    active: false,
   },
 ];
 

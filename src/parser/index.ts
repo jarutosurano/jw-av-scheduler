@@ -94,6 +94,7 @@ function combineWeeklyMeetings(
   weekendRawData: ReturnType<typeof parseWeekendText>
 ): WeeklyMeetingData[] {
   const weeks: WeeklyMeetingData[] = [];
+  const matchedWeekendDates = new Set<string>();
 
   for (const midweek of midweekMeetings) {
     const weekend = findMatchingWeekendMeeting(midweek.date, weekendMeetings);
@@ -104,6 +105,8 @@ function combineWeeklyMeetings(
       );
       continue;
     }
+
+    matchedWeekendDates.add(weekend.date);
 
     // Find the raw weekend data for this date to get public talk speaker
     const weekendRaw = weekendRawData.find((w) => w.date === weekend.date);
@@ -134,6 +137,52 @@ function combineWeeklyMeetings(
       midweekDate: midweek.date,
       weekendDate: weekend.date,
       midweekParts: midweek.parts,
+      weekendParts: weekendPartsWithWT,
+      wtConductor,
+      unavailableForAV,
+      unavailableForMic,
+    });
+  }
+
+  // Handle unmatched weekend meetings (e.g., Memorial week with no midweek meeting)
+  for (const weekend of weekendMeetings) {
+    if (matchedWeekendDates.has(weekend.date)) continue;
+    if (weekend.parts.length === 0) continue;
+
+    // Calculate the Friday (midweek) date: Sunday - 2 days
+    const weekendDate = new Date(weekend.date + 'T00:00:00');
+    weekendDate.setDate(weekendDate.getDate() - 2);
+    const midweekDate = weekendDate.toISOString().split('T')[0];
+
+    const weekendRaw = weekendRawData.find((w) => w.date === weekend.date);
+    const publicTalkSpeaker = weekendRaw?.publicTalkSpeaker || null;
+
+    const wtConductorBrother = getWTConductor(publicTalkSpeaker);
+    const wtConductor = wtConductorBrother?.fullName || null;
+
+    const weekendPartsWithWT = [...weekend.parts];
+    if (wtConductor) {
+      weekendPartsWithWT.push({
+        date: weekend.date,
+        meetingType: 'weekend',
+        partType: 'wt_conductor',
+        partTitle: 'WT Conductor',
+        assignedBrother: wtConductor,
+      });
+    }
+
+    const { unavailableForAV, unavailableForMic } =
+      calculateUnavailableBrothers([], weekendPartsWithWT);
+
+    console.log(
+      `Weekend-only week detected: ${weekend.date} (midweek: ${midweekDate})`
+    );
+
+    weeks.push({
+      weekOf: midweekDate,
+      midweekDate,
+      weekendDate: weekend.date,
+      midweekParts: [],
       weekendParts: weekendPartsWithWT,
       wtConductor,
       unavailableForAV,

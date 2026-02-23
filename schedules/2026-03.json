@@ -1,18 +1,18 @@
 {
   "month": "2026-03",
-  "generated": "2026-02-09T05:53:11.372Z",
+  "generated": "2026-02-23T17:33:55.337Z",
   "weeks": [
     {
       "weekOf": "2026-03-06",
       "midweekDate": "2026-03-06",
       "weekendDate": "2026-03-08",
       "assignments": {
-        "audio": "jayr-sullano",
-        "video": "john-mahor",
+        "audio": "randy-quinol",
+        "video": "matt-mancuso",
         "avAssistant": "cezar-macasieb",
-        "rightMic": "xian-salazar",
-        "leftMic": "matt-mancuso",
-        "frontStage": "zach-lucero",
+        "rightMic": "john-mahor",
+        "leftMic": "jayr-sullano",
+        "frontStage": "dandel-cabusas",
         "auditorium": "ralph-arugay",
         "entrance1": "edmer-sapla",
         "entrance2": "jared-nieva"
@@ -129,19 +129,20 @@
             "assignedBrother": "Jonas Santiso"
           }
         ]
-      }
+      },
+      "locked": true
     },
     {
       "weekOf": "2026-03-13",
       "midweekDate": "2026-03-13",
       "weekendDate": "2026-03-15",
       "assignments": {
-        "audio": "jared-nieva",
-        "video": "jayr-sullano",
-        "avAssistant": "ralph-arugay",
-        "rightMic": "zach-lucero",
+        "audio": "raffy-mondares",
+        "video": "jared-nieva",
+        "avAssistant": "jayr-sullano",
+        "rightMic": "matt-mancuso",
         "leftMic": "john-mahor",
-        "frontStage": "matt-mancuso",
+        "frontStage": "ralph-arugay",
         "auditorium": "dandel-cabusas",
         "entrance1": "edgar-silverio",
         "entrance2": "gally-villanueva"
@@ -251,7 +252,8 @@
             "assignedBrother": "Jonas Santiso"
           }
         ]
-      }
+      },
+      "locked": true
     },
     {
       "weekOf": "2026-03-20",
@@ -259,14 +261,14 @@
       "weekendDate": "2026-03-22",
       "assignments": {
         "audio": "edmer-sapla",
-        "video": "zach-lucero",
-        "avAssistant": "cezar-macasieb",
-        "rightMic": "john-mahor",
+        "video": "dandel-cabusas",
+        "avAssistant": "edgar-silverio",
+        "rightMic": "cezar-macasieb",
         "leftMic": "ralph-arugay",
-        "frontStage": "jayr-sullano",
+        "frontStage": "matt-mancuso",
         "auditorium": "gally-villanueva",
-        "entrance1": "dandel-cabusas",
-        "entrance2": "herman-lucero"
+        "entrance1": "john-mahor",
+        "entrance2": "jayr-sullano"
       },
       "unavailable": {
         "noAV": [
@@ -365,22 +367,23 @@
             "assignedBrother": "Jonas Santiso"
           }
         ]
-      }
+      },
+      "locked": true
     },
     {
       "weekOf": "2026-03-27",
       "midweekDate": "2026-03-27",
       "weekendDate": "2026-03-29",
       "assignments": {
-        "audio": "jared-nieva",
-        "video": "abraham-penera",
-        "avAssistant": "ralph-arugay",
+        "audio": "abraham-penera",
+        "video": "ralph-arugay",
+        "avAssistant": "herman-lucero",
         "rightMic": "edmer-sapla",
-        "leftMic": "zach-lucero",
-        "frontStage": "cezar-macasieb",
-        "auditorium": "melky-basanes",
-        "entrance1": "randy-quinol",
-        "entrance2": "john-mahor"
+        "leftMic": "melky-basanes",
+        "frontStage": "jared-nieva",
+        "auditorium": "randy-quinol",
+        "entrance1": "matt-mancuso",
+        "entrance2": "cezar-macasieb"
       },
       "unavailable": {
         "noAV": [
@@ -471,7 +474,8 @@
             "assignedBrother": "Jonas Santiso"
           }
         ]
-      }
+      },
+      "locked": true
     }
   ]
 }

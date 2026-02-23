@@ -1,6 +1,6 @@
 {
   "month": "2026-02",
-  "generated": "2026-02-09T18:25:20.333Z",
+  "generated": "2026-02-23T16:10:12.153Z",
   "weeks": [
     {
       "weekOf": "2026-02-13",
@@ -251,7 +251,7 @@
       "midweekDate": "2026-02-27",
       "weekendDate": "2026-03-01",
       "assignments": {
-        "audio": "zach-lucero",
+        "audio": "ralph-arugay",
         "video": "john-mahor",
         "avAssistant": "jayr-sullano",
         "rightMic": "gally-villanueva",
@@ -265,7 +265,7 @@
         "noAV": [
           "Silverio, Edgardo",
           "Santiso, Jonas",
-          "Arugay, Ralph",
+          "Mancuso, Matthew",
           "Penera, Abraham",
           "Jonas Santiso"
         ],
@@ -339,7 +339,7 @@
           {
             "partType": "weekend_chairman",
             "partTitle": "Chairman",
-            "assignedBrother": "Arugay, Ralph"
+            "assignedBrother": "Mancuso, Matthew"
           },
           {
             "partType": "public_talk",

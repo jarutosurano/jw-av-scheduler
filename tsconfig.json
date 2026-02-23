@@ -1,13 +1,12 @@
 {
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@/config/*": ["src/config/*"],
-      "@/parser/*": ["src/parser/*"],
-      "@/scheduler/*": ["src/scheduler/*"],
-      "@/types/*": ["src/types/*"]
+      "@/*": ["./src/*"],
+      "@/config/*": ["./src/config/*"],
+      "@/parser/*": ["./src/parser/*"],
+      "@/scheduler/*": ["./src/scheduler/*"],
+      "@/types/*": ["./src/types/*"]
     },
     "types": ["node"],
     "strict": true,

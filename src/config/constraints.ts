@@ -75,7 +75,7 @@ export const videoEligibleBrotherIds: string[] = [
   // MS and publishers
   'jayr-sullano',
   'jared-nieva',
-  'zach-lucero',
+  'ralph-arugay',
   'john-mahor',
   // Elders
   'matt-mancuso',
@@ -88,7 +88,7 @@ export const videoEligibleBrotherIds: string[] = [
 /**
  * Brothers to prioritize for assignments (assign every week if no conflict)
  */
-export const priorityBrotherIds: string[] = ['zach-lucero', 'john-mahor'];
+export const priorityBrotherIds: string[] = ['john-mahor'];
 
 /**
  * Priority order for scheduling (most critical first)

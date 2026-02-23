@@ -1,47 +1,74 @@
 {
   "month": "2026-04",
-  "generated": "2026-02-09T05:53:15.186Z",
+  "generated": "2026-02-23T17:55:03.747Z",
   "weeks": [
     {
       "weekOf": "2026-04-03",
       "midweekDate": "2026-04-03",
       "weekendDate": "2026-04-05",
       "assignments": {
-        "audio": "zach-lucero",
+        "audio": "jared-nieva",
         "video": "jayr-sullano",
-        "avAssistant": "john-mahor",
-        "rightMic": "xian-salazar",
-        "leftMic": "edmer-sapla",
-        "frontStage": "jared-nieva",
-        "auditorium": "jonas-santiso",
-        "entrance1": "ralph-arugay",
-        "entrance2": "cezar-macasieb"
+        "avAssistant": "abraham-penera",
+        "rightMic": "randy-quinol",
+        "leftMic": "raffy-mondares",
+        "frontStage": "john-mahor",
+        "auditorium": "edgar-silverio",
+        "entrance1": "herman-lucero",
+        "entrance2": "melky-basanes"
       },
       "unavailable": {
-        "noAV": [],
-        "noMic": []
+        "noAV": ["Cabusas, Mike Dandel", "Sapla, Edmer", "Jonas Santiso"],
+        "noMic": ["Arugay, Ralph"]
       },
       "conflicts": [],
       "meetingParts": {
         "midweek": [],
-        "weekend": []
+        "weekend": [
+          {
+            "partType": "weekend_chairman",
+            "partTitle": "Chairman",
+            "assignedBrother": "Cabusas, Mike Dandel"
+          },
+          {
+            "partType": "public_talk",
+            "partTitle": "Paano Mo Malalaman ang Mangyayari sa Hinaharap?",
+            "assignedBrother": "Sapla, Edmer"
+          },
+          {
+            "partType": "wt_reader",
+            "partTitle": "Watchtower Reader",
+            "assignedBrother": "Arugay, Ralph"
+          },
+          {
+            "partType": "closing_prayer",
+            "partTitle": "Closing Prayer",
+            "assignedBrother": "Quinol, Randino"
+          },
+          {
+            "partType": "wt_conductor",
+            "partTitle": "WT Conductor",
+            "assignedBrother": "Jonas Santiso"
+          }
+        ]
       },
       "note": "Memorial",
-      "weekendOnly": true
+      "weekendOnly": true,
+      "locked": true
     },
     {
       "weekOf": "2026-04-10",
       "midweekDate": "2026-04-10",
       "weekendDate": "2026-04-12",
       "assignments": {
-        "audio": "zach-lucero",
-        "video": "jared-nieva",
-        "avAssistant": "john-mahor",
+        "audio": "edmer-sapla",
+        "video": "john-mahor",
+        "avAssistant": "ralph-arugay",
         "rightMic": "jayr-sullano",
-        "leftMic": "edmer-sapla",
-        "frontStage": "ralph-arugay",
-        "auditorium": "raffy-mondares",
-        "entrance1": "matt-mancuso",
+        "leftMic": "jared-nieva",
+        "frontStage": "cezar-macasieb",
+        "auditorium": "jonas-santiso",
+        "entrance1": "dandel-cabusas",
         "entrance2": "randy-quinol"
       },
       "unavailable": {
@@ -61,15 +88,15 @@
       "midweekDate": "2026-04-17",
       "weekendDate": "2026-04-19",
       "assignments": {
-        "audio": "jayr-sullano",
+        "audio": "dandel-cabusas",
         "video": "john-mahor",
-        "avAssistant": "zach-lucero",
+        "avAssistant": "randy-quinol",
         "rightMic": "ralph-arugay",
-        "leftMic": "herman-lucero",
-        "frontStage": "edmer-sapla",
-        "auditorium": "randy-quinol",
-        "entrance1": "cezar-macasieb",
-        "entrance2": "dandel-cabusas"
+        "leftMic": "jared-nieva",
+        "frontStage": "cezar-macasieb",
+        "auditorium": "herman-lucero",
+        "entrance1": "matt-mancuso",
+        "entrance2": "abraham-penera"
       },
       "unavailable": {
         "noAV": [
@@ -154,7 +181,7 @@
           {
             "partType": "closing_prayer",
             "partTitle": "Closing Prayer",
-            "assignedBrother": "Nieva, Jared M."
+            "assignedBrother": "Lucero, Herman"
           },
           {
             "partType": "wt_conductor",
@@ -162,22 +189,23 @@
             "assignedBrother": "Jonas Santiso"
           }
         ]
-      }
+      },
+      "locked": true
     },
     {
       "weekOf": "2026-04-24",
       "midweekDate": "2026-04-24",
       "weekendDate": "2026-04-26",
       "assignments": {
-        "audio": "jared-nieva",
+        "audio": "abraham-penera",
         "video": "gally-villanueva",
-        "avAssistant": "edgar-silverio",
-        "rightMic": "john-mahor",
-        "leftMic": "zach-lucero",
-        "frontStage": "abraham-penera",
-        "auditorium": "raffy-mondares",
-        "entrance1": "ralph-arugay",
-        "entrance2": "matt-mancuso"
+        "avAssistant": "matt-mancuso",
+        "rightMic": "edgar-silverio",
+        "leftMic": "john-mahor",
+        "frontStage": "raffy-mondares",
+        "auditorium": "jared-nieva",
+        "entrance1": "dandel-cabusas",
+        "entrance2": "ralph-arugay"
       },
       "unavailable": {
         "noAV": [
@@ -224,6 +252,26 @@
             "assignedBrother": "Salazar, Xian"
           },
           {
+            "partType": "student_talk",
+            "partTitle": "2-min Starting a Conversation",
+            "assignedBrother": "Santiso, Gally Macalalag"
+          },
+          {
+            "partType": "student_talk",
+            "partTitle": "2-min Starting a Conversation",
+            "assignedBrother": "Nieva, Jared M."
+          },
+          {
+            "partType": "student_talk",
+            "partTitle": "2-min Starting a Conversation",
+            "assignedBrother": "Mahor, John Lawrence"
+          },
+          {
+            "partType": "student_talk",
+            "partTitle": "5-min Talk",
+            "assignedBrother": "Sullano, Jayr P."
+          },
+          {
             "partType": "living_as_christians",
             "partTitle": "15-min Ipagpatuloy ang Personal Study Kahit May Hadlang",
             "assignedBrother": "Cabusas, Mike Dandel"
@@ -263,7 +311,7 @@
           {
             "partType": "closing_prayer",
             "partTitle": "Closing Prayer",
-            "assignedBrother": "Basanes, Melquisidecks"
+            "assignedBrother": "Mancuso, Matthew"
           },
           {
             "partType": "wt_conductor",
@@ -271,7 +319,8 @@
             "assignedBrother": "Jonas Santiso"
           }
         ]
-      }
+      },
+      "locked": true
     }
   ]
 }
